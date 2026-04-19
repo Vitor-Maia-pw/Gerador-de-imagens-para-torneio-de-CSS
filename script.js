@@ -14,10 +14,11 @@ ctx.scale(scale, scale);
 let tipoHeader = 0
 let larguraMax = 1920
 let value = 0
-// função que seleciona um dos layouts que serviram para limitar os objetos
+// função que seleciona um dos layouts que servirão para limitar os objetos
 function escolheLayout(l) {
     switch (l) {
         case 1:
+            // gera um header, um main e um footer
             layout1()
             break;
 
@@ -29,26 +30,33 @@ escolheLayout(1)
 
 // a função do layout numero 1, tem as demarcações dele
 function layout1() {
-    // a parte superior do layout um, sua primeira parte
-    // ele que contem o mapa para criar os objetos dentro da parte 1
 
-    let arrayElem1 = []
     // cria de forma visivel as demarcações do layout, os lugares que devem ter quadrados sem vazar
+    // criação dos limites do header
     ctx.beginPath()
     ctx.fillStyle = "blue"
     ctx.fillRect(0, 0, larguraMax, 270)
+    // criação dos limites da main
     ctx.fillStyle = "red"
     ctx.fillRect(0, 270, larguraMax, 540)
+    // criação dos limites do footer
     ctx.fillStyle = "green"
     ctx.fillRect(0, 810, larguraMax, 270)
 
+    // decide o tipo de header de forma aleatória
     tipoHeader = Math.floor(Math.random() * 5) + 1
     // chama a função, e envia o tipo de layout do header
     escolheHeader(tipoHeader, larguraMax, 270)
+    // decide o tipo de header de forma aleatória
+    tipoMain = Math.floor(Math.random() * 5) + 1
+    // chama a função, e envia o tipo de layout do Main
+    escolheMain(tipoMain, larguraMax, 540)
 
 }
 
+// função que recebe os limites do layout e o tipo do header para chamar a sua devida função
 function escolheHeader(tipo, w, h) {
+
     //verifica qual o tipo do header e chama a função
     switch (tipo) {
         case 1:
@@ -79,87 +87,93 @@ function escolheHeader(tipo, w, h) {
     }
 }
 
+// função que cria o header do tipo 1 com os limites do layout
 function criarHeader1(wHe, hHe, x, y, xf, yf, tamMinX, tamMinY, w, h, cx, cy, ch, cw, aleatorio) {
 
-    //gera um valor aleatorio para x que vai de 0 a 60
     // esse é a distancia do objeto até a borda esquerda
     x = Math.floor(Math.random() * 6 * 10)
     y = Math.floor(Math.random() * 10) * 10
 
-    // valor limite usado para limitar o tamanho do objeto, ele não pode ser maior que isso
+    // valor usado para limitar o tamanho do objeto, ele não pode ser maior que isso
     xf = wHe / 4
     yf = hHe - y
 
-    // tamanho minimo do objeto, as vezes pode ser menor
+    // margem do tamanho do objeto
     tamMinX = hHe - x * 2
     tamMinY = hHe - y * 2
 
-    // gera o tamanho de forma aleatoria
+    // gera o tamanho de forma aleatoria, com os limites impostos
     w = Math.floor(Math.random() * (xf - tamMinX - x) + tamMinX)
     h = Math.floor(Math.random() * (yf - tamMinY - y) + tamMinY)
 
-    // salva os tamanhos para usalos posteriormente
+    // salva os tamanhos para usa-los posteriormente
     cx = x
     cy = y
     cw = w
     ch = h
 
-    //envia as características para serem desenhadas
+    // envia as características para serem desenhadas
     criarElem(x, y, w, h, "black")
     aleatorio = Math.floor(Math.random() * 7)
     // envia o x e y inicial, width e height maximos, para gerar quadrados dentro
-    escolheRet(x, y, w + x, h + y, aleatorio)
+    escolheRet(x, y, w, h, aleatorio)
 
-    //chama o segundo quadrado do centro
+    // chama o segundo quadrado do centro
+    // gera um valor aleatório para o x, ele deve ser o quadrado anterior mais uma pequena margem
     x = x + w + Math.floor(Math.random() * 20) * 10 + 20
-    y = Math.floor(Math.random() * 9) * 10;
+    // gera um valor aleatório para o y, deve ser o valor de height maximo dividido por 5, mais uma margem de height maximo vezes 2 dividido por 5
+    y = Math.floor(Math.random() * ((hHe * 2 / 5) - hHe / 5)) + hHe / 5;
+    // limita o tamanho do quadrado, deve ser espelhado a margem do lado esquerdo no lado direito
     xf = wHe - x * 2
+    // calcula o width do quadrado
     tamMinX = wHe - x * 2
+    // calcula um valor aproximado para o height do quadrado
     tamMinY = hHe - y * 2
 
+    // determina os tamanhos
     w = tamMinX
     h = Math.random() * (yf - tamMinY - y) + tamMinY
 
     //desenha o segundo quadrado
     criarElem(x, y, w, h, "black")
     aleatorio = Math.floor(Math.random() * 7)
-    escolheRet(x, y, w + x, h + y, aleatorio)
+    escolheRet(x, y, w, h, aleatorio)
 
     // espelha o primeiro quadrado do outro lado
     x = wHe - cx - cw
     y = cy
 
     criarElem(x, y, cw, ch, "black")
-    escolheRet(x, y, cw + x, ch + y, aleatorio)
+    escolheRet(x, y, cw, ch, aleatorio)
 }
 // criarHeader1()
 
+// função que cria o header do tipo 1 com os limites do layout
 function criarHeader2(wHe, hHe, x, y, xf, yf, tamMinX, tamMinY, w, h, aleatorio) {
 
-    //gera um valor aleatorio para x que vai de 0 a 60
     // esse é a distancia do objeto até a borda esquerda
-    x = Math.floor(Math.random() * 60)
+    x = Math.floor(Math.random() * 6) * 10
     y = Math.floor(Math.random() * 10) * 10
 
     // valor limite usado para limitar o tamanho do objeto, ele não pode ser maior que isso
     xf = wHe / 3 * 2
     yf = hHe - y
 
-    // tamanho minimo do objeto
+    // tamanho aproximado do objeto
     tamMinX = wHe / 4 * 2.5
     tamMinY = hHe - y * 2
 
-    // gera o tamanho de forma aleatoria
+    // gera o tamanho de forma aleatoria, gera um valor entre valorF e margem, e com tamanho minimo tamMin
     w = Math.floor(Math.random() * ((xf - x) - tamMinX)) + tamMinX
     h = Math.floor(Math.random() * ((yf - y) - tamMinY)) + tamMinY
 
-    //envia as características para serem desenhadas
+    // envia as características para serem desenhadas
     criarElem(x, y, w, h, "black")
+    // gera um valor aleatorio de 10 a 11
     aleatorio = Math.floor(Math.random() * 2) + 10
     // envia o x e y inicial, width e height maximos, para gerar quadrados dentro
-    escolheRet(x, y, w + x, h + y, aleatorio)
+    escolheRet(x, y, w, h, aleatorio)
 
-    //gera um valor aleatorio para x que vai de 0 a 60
     // esse é a distancia do objeto até a borda esquerda
     x = Math.floor(Math.random() * 60)
     y = Math.floor(Math.random() * 10) * 10
@@ -179,12 +193,11 @@ function criarHeader2(wHe, hHe, x, y, xf, yf, tamMinX, tamMinY, w, h, aleatorio)
     x = wHe - x - w
     criarElem(x, y, w, h, "black")
     aleatorio = Math.floor(Math.random() * 7)
-    escolheRet(x, y, w + x, h + y, aleatorio)
+    escolheRet(x, y, w, h, aleatorio)
 }
 // criarHeader2()
 function criarHeader3(wHe, hHe, x, y, xf, yf, tamMinX, tamMinY, w, h, aleatorio) {
 
-    //gera um valor aleatorio para x que vai de 0 a 60
     // esse é a distancia do objeto até a borda esquerda
     x = Math.floor(Math.random() * 6 * 10)
     y = Math.floor(Math.random() * 10) * 10
@@ -193,7 +206,7 @@ function criarHeader3(wHe, hHe, x, y, xf, yf, tamMinX, tamMinY, w, h, aleatorio)
     xf = wHe / 4
     yf = hHe - y
 
-    // tamanho minimo do objeto, as vezes pode ser menor
+    // tamanho aproximado do objeto, as vezes pode ser menor
     tamMinX = hHe - x * 2
     tamMinY = hHe - y * 2
 
@@ -211,12 +224,11 @@ function criarHeader3(wHe, hHe, x, y, xf, yf, tamMinX, tamMinY, w, h, aleatorio)
     criarElem(x, y, w, h, "black")
     aleatorio = Math.floor(Math.random() * 7)
     // envia o x e y inicial, width e height maximos, para gerar quadrados dentro
-    escolheRet(x, y, w + x, h + y, aleatorio)
+    escolheRet(x, y, w, h, aleatorio)
 
     // valor limite usado para limitar o tamanho do objeto, ele não pode ser maior que isso
     xf = wHe / 4 * 2
     yf = hHe - y
-    //gera um valor aleatorio para x que vai de 0 a 60
     // esse é a distancia do objeto até a borda esquerda
     x = Math.floor(Math.random() * 60)
     y = Math.floor(Math.random() * 10) * 10
@@ -236,52 +248,58 @@ function criarHeader3(wHe, hHe, x, y, xf, yf, tamMinX, tamMinY, w, h, aleatorio)
     criarElem(x, y, w, h, "black")
     aleatorio = Math.floor(Math.random() * 2) + 10
     // envia o x e y inicial, width e height maximos, para gerar quadrados dentro
-    escolheRet(x, y, w + x, h + y, aleatorio)
+    escolheRet(x, y, w, h, aleatorio)
 }
 // criarHeader3()
+
 function criarHeader4(wHe, hHe, x, y, cx, w, h, aleatorio, quant) {
 
+    // gera a quantidade de quadrados, a quantidade pode alterar o tamanho dos objetos 
     quant = Math.floor(Math.random() * 3) + 4
 
-    //fração da quantidade de quadrado pelo espaço
-    quant / (1 + 2 * quant)
+    // fração da quantidade de quadrado pelo espaço
+    // quant / (1 + 2 * quant)
 
+    // o width é um valor aleatório, o ele deve ser no minimo o width total dividido pelo numero de quadrados e espaços entre eles
     w = wHe / (1 + 2 * quant) + Math.floor(Math.random() * 21) + wHe / (1 + 2 * quant * 5)
+    // o height é o tamanho total dividido por 5
     h = hHe / 5
+    // a margem é igual ao width total dividido pela quatidade de quadrados mais os espaços
     x = (wHe / (1 + 2 * quant)) * 2 - w
     y = Math.floor(Math.random() * 41)
+
     //envia as características para serem desenhadas
     criarElem(x, y, w, h, "black")
     aleatorio = Math.floor(Math.random() * 2) + 10
     // envia o x e y inicial, width e height maximos, para gerar quadrados dentro
-    escolheRet(x, y, w + x, h + y, aleatorio)
+    escolheRet(x, y, w, h, aleatorio)
     for (let i = 0; i < quant - 1; i++) {
         x += (wHe / (1 + 2 * quant)) * 2
         //envia as características para serem desenhadas
         criarElem(x, y, w, h, "black")
         aleatorio = Math.floor(Math.random() * 2) + 10
         // envia o x e y inicial, width e height maximos, para gerar quadrados dentro
-        escolheRet(x, y, w + x, h + y, aleatorio)
+        escolheRet(x, y, w, h, aleatorio)
 
     }
     quant = Math.floor(Math.random() * 2) + 2
-    x = (wHe / (1 + 2 * quant)) * 4 / 10
+    x = Math.floor((wHe / (1 + 2 * quant)) * 4 / 10)
     cx = x
     y = y + h + Math.floor(Math.random() * 30) + 20
-    w = (wHe - (quant + 1) * x) / quant
+    w = Math.floor((wHe - (quant + 1) * x) / quant)
     h = hHe - y - Math.floor(Math.random() * 30)
     //envia as características para serem desenhadas
     criarElem(x, y, w, h, "black")
     aleatorio = Math.floor(Math.random() * 7)
     // envia o x e y inicial, width e height maximos, para gerar quadrados dentro
-    escolheRet(x, y, w + x, h + y, aleatorio)
+    escolheRet(x, y, w, h, aleatorio)
     for (let i = 0; i < quant - 1; i++) {
         x += cx + w
         //envia as características para serem desenhadas
         criarElem(x, y, w, h, "black")
         aleatorio = Math.floor(Math.random() * 7)
         // envia o x e y inicial, width e height maximos, para gerar quadrados dentro
-        escolheRet(x, y, w + x, h + y, aleatorio)
+        escolheRet(x, y, w, h, aleatorio)
 
     }
 
@@ -292,7 +310,7 @@ function criarHeader5(wHe, hHe, x, y, cx, ch, w, h, aleatorio, quant) {
 
     //fração da quantidade de quadrado pelo espaço
     quant = Math.floor(Math.random() * 2) + 2
-    x = (wHe / (1 + 2 * quant)) * 4 / 10
+    x = Math.floor((wHe / (1 + 2 * quant)) * 4 / 10)
     cx = x
     ch = Math.floor(Math.random() * 30) + 40
     y = Math.floor(Math.random() * 20) + 10
@@ -300,16 +318,17 @@ function criarHeader5(wHe, hHe, x, y, cx, ch, w, h, aleatorio, quant) {
     h = hHe - ch - y * 2
     //envia as características para serem desenhadas
     criarElem(x, y, w, h, "black")
+    console.log(x, y, w, h)
     aleatorio = Math.floor(Math.random() * 7)
     // envia o x e y inicial, width e height maximos, para gerar quadrados dentro
-    escolheRet(x, y, w + x, h + y, aleatorio)
+    escolheRet(x, y, w, h, aleatorio)
     for (let i = 0; i < quant - 1; i++) {
         x += cx + w
         //envia as características para serem desenhadas
         criarElem(x, y, w, h, "black")
         aleatorio = Math.floor(Math.random() * 7)
         // envia o x e y inicial, width e height maximos, para gerar quadrados dentro
-        escolheRet(x, y, w + x, h + y, aleatorio)
+        escolheRet(x, y, w, h, aleatorio)
 
     }
 
@@ -320,8 +339,68 @@ function criarHeader5(wHe, hHe, x, y, cx, ch, w, h, aleatorio, quant) {
     criarElem(x, y, w, h, "black")
 
 }
-// criarHeader5()
-function escolheRet(xi, yi, xf, yf, aleatorio, x, y, w, h, p, px, py, tamMinX, tamMinY, lado) {
+
+function escolheMain(tipo, w, h) {
+
+    //verifica qual o tipo do Main e chama a função
+    switch (1) {
+        case 1:
+            // quadrado + retangulo + quadrado
+            criarMain1(w, h, 270)
+            break;
+
+        case 2:
+            // retangulo + quadrado
+            criarMain2(w, h, 270)
+
+            break;
+        case 3:
+            // quadrado + retangulo
+            criarMain3(w, h, 270)
+
+            break;
+        case 4:
+            //retangulinhos/retangulos
+            criarMain4(w, h, 270)
+
+            break;
+        case 5:
+            //retangulinhos/retangulos
+            criarMain5(w, h, 270)
+
+            break;
+    }
+}
+
+// função que cria o Main do tipo 1 com os limites do layout
+function criarMain1(wMa, hMa, yi, x, y, xf, yf, tamMinX, tamMinY, w, h, cx, cy, ch, cw, aleatorio) {
+
+    quant = Math.floor(Math.random() * 3) + 3
+    w = Math.floor(wMa / (2 * quant + 1)) + Math.floor(Math.random() * 80 + 80)
+    y = Math.floor(Math.random() * 40 + 30) + yi
+    h = hMa - 2 * (y - yi)
+    x = Math.floor((wMa - (w * quant)) / (quant + 1))
+    cx = x
+    console.log(x, y, w, h, "para")
+    criarElem(x, y, w, h, "black")
+    aleatorio = Math.floor(Math.random() * 1 ) + 20
+    // envia o x e y inicial, width e height maximos, para gerar quadrados dentro
+    escolheRet(x, y, w, h, aleatorio)
+    for (let i = 0; i < quant; i++) {
+        x += cx + w
+        criarElem(x, y, w, h, "black")
+        aleatorio = Math.floor(Math.random() * 1 ) + 20
+        // envia o x e y inicial, width e height maximos, para gerar quadrados dentro
+        escolheRet(x, y, w, h, aleatorio)
+    }
+}
+function escolheRet(x, y, w, h, aleatorio, xi, yi, xf, yf, cw, ch, p, px, py, tamMinX, tamMinY, lado) {
+    xi = x
+    yi = y
+    xf = x + w
+    yf = y + h
+    cw = w
+    ch = h
     switch (aleatorio) {
         case 0:
 
@@ -329,10 +408,10 @@ function escolheRet(xi, yi, xf, yf, aleatorio, x, y, w, h, p, px, py, tamMinX, t
         // um quadrado com margin lateral
         case 1:
             // tamanho minimo é 20% do quadrado pai
-            tamMinX = Math.floor((xf - xi) / 5)
-            tamMinY = Math.floor((yf - yi) / 5)
-            x = xi + Math.floor(Math.random() * (20 - 10) + 5)
-            y = yi + x - xi
+            tamMinX = Math.floor(w / 8)
+            tamMinY = Math.floor(h / 8)
+            x = x + Math.floor(Math.random() * (20 - 10) + 10)
+            y = y + x - xi
             w = Math.floor(Math.random() * ((xf - x) - tamMinX) + tamMinX)
             h = Math.floor(Math.random() * ((yf - y) - tamMinY) + tamMinY)
             criarElem(x, y, w, h, "green")
@@ -341,8 +420,8 @@ function escolheRet(xi, yi, xf, yf, aleatorio, x, y, w, h, p, px, py, tamMinX, t
         case 2:
             lado = Math.floor(Math.random() * 2)
             p = Math.floor(Math.random() * 2)
-            tamMinX = Math.floor((xf - xi) / 5)
-            tamMinY = Math.floor((yf - yi) / 5)
+            tamMinX = Math.floor(w / 8)
+            tamMinY = Math.floor(h / 8)
             if (lado === 0) {
 
                 px = Math.floor(Math.random() * 10) + 10
@@ -359,21 +438,21 @@ function escolheRet(xi, yi, xf, yf, aleatorio, x, y, w, h, p, px, py, tamMinX, t
 
                 criarElem(x, y, w, h, "white")
             } else {
-                
-                    px = Math.floor(Math.random() * 10) + 10
-                    py = Math.floor(Math.random() * 10) + 10
-                    w = Math.floor(Math.random() * ((xf - xi - px) / 2 - tamMinX) + tamMinX)
-                    h = Math.floor(Math.random() * ((yf - yi - py) / 2 - tamMinY) + tamMinY)
-                    x = xf - px - w
-                    y = yi + py
 
-                
+                px = Math.floor(Math.random() * 10) + 10
+                py = Math.floor(Math.random() * 10) + 10
+                w = Math.floor(Math.random() * ((cw - px) / 2 - tamMinX) + tamMinX)
+                h = Math.floor(Math.random() * ((ch - py) / 2 - tamMinY) + tamMinY)
+                x = xf - px - w
+                y = yi + py
+
+
 
                 criarElem(x, y, w, h, "green")
-                
-                    x = xi + px
-                    y = yf - h - py
-                
+
+                x = xi + px
+                y = yf - h - py
+
 
                 criarElem(x, y, w, h, "white")
             }
@@ -381,8 +460,8 @@ function escolheRet(xi, yi, xf, yf, aleatorio, x, y, w, h, p, px, py, tamMinX, t
             break;
         // gera dois quadrados no topo
         case 3:
-            tamMinX = Math.floor((xf - xi) / 5)
-            tamMinY = Math.floor((yf - yi) / 5)
+            tamMinX = Math.floor(cw / 5)
+            tamMinY = Math.floor(ch / 5)
 
             x = xi + Math.floor(Math.random() * 10) + 10
             y = yi + Math.floor(Math.random() * 10) + 10
@@ -395,82 +474,92 @@ function escolheRet(xi, yi, xf, yf, aleatorio, x, y, w, h, p, px, py, tamMinX, t
             break;
         // gera um quadrado no centro
         case 4:
-            tamMinX = Math.floor((xf - xi) / 5)
-            tamMinY = Math.floor((yf - yi) / 5)
-            w = Math.floor(Math.random() * ((xf - xi) / 2 - tamMinX) + tamMinX)
-            h = Math.floor(Math.random() * ((yf - yi) / 2 - tamMinY) + tamMinY)
-            x = xi + (xf - xi) / 2 - w / 2
-            y = yi + (yf - yi) / 2 - h / 2
+            tamMinX = Math.floor(cw / 5)
+            tamMinY = Math.floor(ch / 5)
+            w = Math.floor(Math.random() * (cw / 2 - tamMinX) + tamMinX)
+            h = Math.floor(Math.random() * (ch / 2 - tamMinY) + tamMinY)
+            x = xi + cw / 2 - w / 2
+            y = yi + ch / 2 - h / 2
             criarElem(x, y, w, h, "white")
 
             break;
         // gera 3 retangulos centralizados
         case 5:
-            w = Math.floor((xf - xi) / 2)
-            h = Math.floor((yf - yi) / 8)
+            w = Math.floor(cw / 2)
+            h = Math.floor(ch / 8)
 
-            x = xi + (xf - xi) / 2 - w / 2
-            y = yi + (yf - yi) / 32 * 5
+            x = xi + cw / 2 - w / 2
+            y = yi + ch / 32 * 5
             criarElem(x, y, w, h, "pink")
-            y = y + (yf - yi) / 32 * 5 + h
+            y = y + ch / 32 * 5 + h
             criarElem(x, y, w, h, "pink")
-            y = y + (yf - yi) / 32 * 5 + h
+            y = y + ch / 32 * 5 + h
             criarElem(x, y, w, h, "pink")
             break;
         // gera 3 retangulos sequenciais
         case 6:
 
-            tamMinY = Math.floor((yf - yi) / 5)
-            w = xf - xi
-            h = Math.floor(Math.random() * ((yf - yi) / 4 - tamMinY) + tamMinY)
+            tamMinY = Math.floor(ch / 5)
+            w = cw
+            h = Math.floor(Math.random() * (ch / 4 - tamMinY) + tamMinY)
             x = xi
-            y = yi + (yf - yi) / 2 - h / 2
+            y = yi + ch / 2 - h / 2
             criarElem(x, y, w, h, "white")
             break;
 
         // casos acima de 9 são para retangulos do header
         // gera ou 3 retangulos sequenciais ou 1 retangulo central
         case 10:
-            if ((yf - yi) / 5 > 30) {
-                w = Math.floor((xf - xi) / 2)
-                h = Math.floor((yf - yi) / 8)
+            if (ch / 5 > 30) {
+                w = Math.floor(cw / 2)
+                h = Math.floor(ch / 8)
 
                 x = xi + Math.floor(Math.random() * 90)
-                y = yi + (yf - yi) / 32 * 5
+                y = yi + ch / 32 * 5
                 criarElem(x, y, w, h, "pink")
-                y = y + (yf - yi) / 32 * 5 + h
+                y = y + ch / 32 * 5 + h
                 criarElem(x, y, w, h, "pink")
-                y = y + (yf - yi) / 32 * 5 + h
+                y = y + ch / 32 * 5 + h
                 criarElem(x, y, w, h, "pink")
             } else {
-                w = Math.floor((xf - xi) / 2)
-                h = Math.floor((yf - yi) / 5)
+                w = Math.floor(cw / 2)
+                h = Math.floor(ch / 5)
 
-                x = xi + Math.floor(Math.random() * (xf - xi) / 4)
-                y = yi + (yf - yi) / 2 - h / 2
+                x = xi + Math.floor(Math.random() * cw / 4)
+                y = yi + ch / 2 - h / 2
                 criarElem(x, y, w, h, "pink")
             }
             break;
         case 11:
-            if ((yf - yi) / 5 > 30) {
-                w = Math.floor((xf - xi) / 2)
-                h = Math.floor((yf - yi) / 8)
+            if (ch / 5 > 30) {
+                w = Math.floor(cw / 2)
+                h = Math.floor(ch / 8)
 
                 x = xf - w - Math.floor(Math.random() * 90)
-                y = yi + (yf - yi) / 32 * 5
+                y = yi + ch / 32 * 5
                 criarElem(x, y, w, h, "pink")
-                y = y + (yf - yi) / 32 * 5 + h
+                y = y + ch / 32 * 5 + h
                 criarElem(x, y, w, h, "pink")
-                y = y + (yf - yi) / 32 * 5 + h
+                y = y + ch / 32 * 5 + h
                 criarElem(x, y, w, h, "pink")
             } else {
-                w = Math.floor((xf - xi) / 2)
-                h = Math.floor((yf - yi) / 5)
+                w = Math.floor(cw / 2)
+                h = Math.floor(ch / 5)
 
-                x = xf - w - Math.floor(Math.random() * (xf - xi) / 4)
-                y = yi + (yf - yi) / 2 - h / 2
+                x = xf - w - Math.floor(Math.random() * cw / 4)
+                y = yi + ch / 2 - h / 2
                 criarElem(x, y, w, h, "pink")
             }
+            break;
+        case 20:
+            x = xi + Math.floor(Math.random() * 11 )+ 20
+            y = yi + Math.floor(Math.random() * 11 )+ 20
+            w = xi + cw - (x * 2 - xi)
+            h = Math.floor(Math.random() * 50 + 150)
+            criarElem(x, y, w, h, "blue")
+            break;
+        case 21:
+
             break;
     }
 }
@@ -482,4 +571,4 @@ function criarElem(x, y, w, h, color) {
 
 }
 // x = Math.random() * (xf - xi - tamMinX) + xi;
-// y = Math.random() * (yf - yi - tamMinY) + yi;
+// y = Math.random() * (ch - tamMinY) + yi;
