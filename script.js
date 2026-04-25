@@ -63,7 +63,7 @@ function layout1() {
     // chama a função, e envia o tipo de layout do header
     escolheHeader(tipoHeader, larguraMax, 270, tipoCorHeader)
     // decide o tipo de header de forma aleatória
-    tipoMain = Math.floor(Math.random() * 5) + 1
+    tipoMain = Math.floor(Math.random() * 2) + 1
     // chama a função, e envia o tipo de layout do Main
     escolheMain(tipoMain, larguraMax, 540, tipoCorMain)
 
@@ -129,7 +129,7 @@ function criarHeader1(wHe, hHe, tipoCor, x, y, xf, yf, tamMinX, tamMinY, w, h, c
 
     // envia as características para serem desenhadas
 
-    aleatorio = Math.floor(Math.random() * 7)
+    aleatorio = Math.floor(Math.random() * 9)
     geraCor(x, y, w, h, tipoCor, 1, aleatorio)
 
     // chama o segundo quadrado do centro
@@ -150,14 +150,14 @@ function criarHeader1(wHe, hHe, tipoCor, x, y, xf, yf, tamMinX, tamMinY, w, h, c
 
     //desenha o segundo quadrado
 
-    aleatorio = Math.floor(Math.random() * 7)
+    aleatorio = Math.floor(Math.random() * 9)
     geraCor(x, y, w, h, tipoCor, 1, aleatorio)
 
     // espelha o primeiro quadrado do outro lado
     x = wHe - cx - cw
     y = cy
 
-    aleatorio = Math.floor(Math.random() * 7)
+    aleatorio = Math.floor(Math.random() * 9)
     geraCor(x, y, cw, ch, tipoCor, 1, aleatorio)
 }
 // criarHeader1()
@@ -183,7 +183,7 @@ function criarHeader2(wHe, hHe, tipoCor, x, y, xf, yf, tamMinX, tamMinY, w, h, a
 
     // envia as características para serem desenhadas
 
-    aleatorio = Math.floor(Math.random() * 2) + 10
+    aleatorio = Math.floor(Math.random() * 9)
     geraCor(x, y, w, h, tipoCor, 1, aleatorio)
 
     // esse é a distancia do objeto até a borda esquerda
@@ -205,8 +205,8 @@ function criarHeader2(wHe, hHe, tipoCor, x, y, xf, yf, tamMinX, tamMinY, w, h, a
     x = wHe - x - w
 
 
-    aleatorio = Math.floor(Math.random() * 7)
-     geraCor(x, y, w, h, tipoCor, 1, aleatorio)
+    aleatorio = Math.floor(Math.random() * 9)
+    geraCor(x, y, w, h, tipoCor, 1, aleatorio)
 }
 // criarHeader2()
 function criarHeader3(wHe, hHe, tipoCor, x, y, xf, yf, tamMinX, tamMinY, w, h, aleatorio) {
@@ -235,8 +235,8 @@ function criarHeader3(wHe, hHe, tipoCor, x, y, xf, yf, tamMinX, tamMinY, w, h, a
 
     //envia as características para serem desenhadas
 
-    aleatorio = Math.floor(Math.random() * 7)
-     geraCor(x, y, w, h, tipoCor, 1, aleatorio)
+    aleatorio = Math.floor(Math.random() * 9)
+    geraCor(x, y, w, h, tipoCor, 1, aleatorio)
 
     // valor limite usado para limitar o tamanho do objeto, ele não pode ser maior que isso
     xf = wHe / 4 * 2
@@ -258,8 +258,8 @@ function criarHeader3(wHe, hHe, tipoCor, x, y, xf, yf, tamMinX, tamMinY, w, h, a
 
     //envia as características para serem desenhadas
 
-    aleatorio = Math.floor(Math.random() * 2) + 10
-     geraCor(x, y, w, h, tipoCor, 1, aleatorio)
+    aleatorio = Math.floor(Math.random() * 9)
+    geraCor(x, y, w, h, tipoCor, 1, aleatorio)
 }
 // criarHeader3()
 
@@ -281,16 +281,14 @@ function criarHeader4(wHe, hHe, tipoCor, x, y, cx, w, h, aleatorio, quant) {
 
     //envia as características para serem desenhadas
 
-    aleatorio = Math.floor(Math.random() * 2) + 10
-     geraCor(x, y, w, h, tipoCor, 1, aleatorio)
+    aleatorio = Math.floor(Math.random() * 9)
+    geraCor(x, y, w, h, tipoCor, 1, aleatorio)
     for (let i = 0; i < quant - 1; i++) {
         x += (wHe / (1 + 2 * quant)) * 2
         //envia as características para serem desenhadas
-        rgb1 = Math.floor(Math.random() * 256)
-        rgb2 = Math.floor(Math.random() * 256)
-        rgb3 = Math.floor(Math.random() * 256)
-        aleatorio = Math.floor(Math.random() * 2) + 10
-         geraCor(x, y, w, h, tipoCor, 1, aleatorio)
+
+        aleatorio = Math.floor(Math.random() * 9)
+        geraCor(x, y, w, h, tipoCor, 1, aleatorio)
 
     }
     quant = Math.floor(Math.random() * 2) + 2
@@ -301,16 +299,14 @@ function criarHeader4(wHe, hHe, tipoCor, x, y, cx, w, h, aleatorio, quant) {
     h = hHe - y - Math.floor(Math.random() * 30)
     //envia as características para serem desenhadas
 
-    aleatorio = Math.floor(Math.random() * 7)
-     geraCor(x, y, w, h, tipoCor, 1, aleatorio)
+    aleatorio = Math.floor(Math.random() * 9)
+    geraCor(x, y, w, h, tipoCor, 1, aleatorio)
     for (let i = 0; i < quant - 1; i++) {
         x += cx + w
         //envia as características para serem desenhadas
-        rgb1 = Math.floor(Math.random() * 256)
-        rgb2 = Math.floor(Math.random() * 256)
-        rgb3 = Math.floor(Math.random() * 256)
-        aleatorio = Math.floor(Math.random() * 7)
-         geraCor(x, y, w, h, tipoCor, 1, aleatorio)
+
+        aleatorio = Math.floor(Math.random() * 9)
+        geraCor(x, y, w, h, tipoCor, 1, aleatorio)
 
     }
 
@@ -329,15 +325,13 @@ function criarHeader5(wHe, hHe, tipoCor, x, y, cx, ch, w, h, aleatorio, quant) {
     h = hHe - ch - y * 2
     //envia as características para serem desenhadas
 
-    aleatorio = Math.floor(Math.random() * 7)
-     geraCor(x, y, w, h, tipoCor, 1, aleatorio)
+    aleatorio = Math.floor(Math.random() * 9)
+    geraCor(x, y, w, h, tipoCor, 1, aleatorio)
     for (let i = 0; i < quant - 1; i++) {
         x += cx + w
         //envia as características para serem desenhadas
-        rgb1 = Math.floor(Math.random() * 256)
-        rgb2 = Math.floor(Math.random() * 256)
-        rgb3 = Math.floor(Math.random() * 256)
-        aleatorio = Math.floor(Math.random() * 7)
+
+        aleatorio = Math.floor(Math.random() * 9)
         geraCor(x, y, w, h, tipoCor, 1, aleatorio)
 
     }
@@ -347,14 +341,14 @@ function criarHeader5(wHe, hHe, tipoCor, x, y, cx, ch, w, h, aleatorio, quant) {
     h = hHe - y * 2 - h
     y = hHe - h
 
-     geraCor(x, y, w, h, tipoCor, 0, aleatorio)
+    geraCor(x, y, w, h, tipoCor, 0, aleatorio)
 
 }
 
 function escolheMain(tipo, w, h, tipoCor) {
 
     //verifica qual o tipo do Main e chama a função
-    switch (1) {
+    switch (tipo) {
         case 1:
             // quadrado + retangulo + quadrado
             criarMain1(w, h, 270, tipoCor)
@@ -382,9 +376,9 @@ function escolheMain(tipo, w, h, tipoCor) {
             break;
     }
 }
-
+// escolhe main
 // função que cria o Main do tipo 1 com os limites do layout
-function criarMain1(wMa, hMa, yi, tipoCor, x, y, w, h, cx, aleatorio) {
+function criarMain1(wMa, hMa, yi, tipoCor, x, y, w, h, cx, aleatorio, quant) {
 
     quant = Math.floor(Math.random() * 3) + 3
     w = Math.floor(wMa / (2 * quant + 1)) + Math.floor(Math.random() * 80 + 80)
@@ -393,14 +387,46 @@ function criarMain1(wMa, hMa, yi, tipoCor, x, y, w, h, cx, aleatorio) {
     x = Math.floor((wMa - (w * quant)) / (quant + 1))
     cx = x
 
-    aleatorio = Math.floor(Math.random() * 2) + 20
+    aleatorio = Math.floor(Math.random() * 3) + 20
     geraCor(x, y, w, h, tipoCor, 1, aleatorio)
     for (let i = 0; i < quant; i++) {
         x += cx + w
-        aleatorio = Math.floor(Math.random() * 2) + 20
+        aleatorio = Math.floor(Math.random() * 3) + 20
         geraCor(x, y, w, h, tipoCor, 1, aleatorio)
     }
 }
+// Main1
+function criarMain2(wMa, hMa, yi, tipoCor, x, y, w, h, cx, cy, aleatorio, quant, gap) {
+    quant = Math.floor(Math.random() * 2 + 2)
+    gap = Math.floor(Math.random() * 50) + 30
+    x = Math.floor(Math.random() * (wMa/(4 * quant + 1)))
+    y = Math.floor(Math.random() * 40 + 30) + yi
+    w = Math.floor((wMa - 2 * x)/quant - (gap * 2))
+    h = hMa/2 - 3 * (y - yi) / 2
+    cx = x
+    cy = y
+    
+    y = hMa - (y - yi) + yi - h
+    aleatorio = Math.floor(Math.random() * 9)
+    geraCor(x, cy, w, h, tipoCor, 1, aleatorio)
+    console.log(aleatorio)
+    
+    aleatorio = Math.floor(Math.random() * 9)
+    geraCor(x, y, w, h, tipoCor, 1, aleatorio)
+    console.log(aleatorio)
+    
+    for (let i = 0; i < quant - 1; i++) {
+        x += w + (wMa - w * quant - cx * 2)/(quant - 1)
+        aleatorio = Math.floor(Math.random() * 9)
+        geraCor(x, cy, w, h, tipoCor, 1, aleatorio)
+        console.log(aleatorio)
+        aleatorio = Math.floor(Math.random() * 9)
+        geraCor(x, y, w, h, tipoCor, 1, aleatorio)
+        console.log(aleatorio)
+        
+    }
+}
+// Main2
 function escolheRet(x, y, w, h, aleatorio, cor, xi, yi, xf, yf, cw, ch, p, px, py, tamMinX, tamMinY, lado) {
     xi = x
     yi = y
@@ -408,7 +434,6 @@ function escolheRet(x, y, w, h, aleatorio, cor, xi, yi, xf, yf, cw, ch, p, px, p
     yf = y + h
     cw = w
     ch = h
-    console.log("a")
     switch (aleatorio) {
         case 0:
 
@@ -525,7 +550,7 @@ function escolheRet(x, y, w, h, aleatorio, cor, xi, yi, xf, yf, cw, ch, p, px, p
 
         // casos acima de 9 são para retangulos do header
         // gera ou 3 retangulos sequenciais ou 1 retangulo central
-        case 10:
+        case 7:
             if (ch / 5 > 30) {
                 w = Math.floor(cw / 2)
                 h = Math.floor(ch / 8)
@@ -546,7 +571,8 @@ function escolheRet(x, y, w, h, aleatorio, cor, xi, yi, xf, yf, cw, ch, p, px, p
                 criarElem(x, y, w, h, `rgb(${cor.r}, ${cor.g}, ${cor.b})`)
             }
             break;
-        case 11:
+        // dependendo do tamanho gera retangulos centralizados verticalmente
+        case 8:
             if (ch / 5 > 30) {
                 w = Math.floor(cw / 2)
                 h = Math.floor(ch / 8)
@@ -567,6 +593,7 @@ function escolheRet(x, y, w, h, aleatorio, cor, xi, yi, xf, yf, cw, ch, p, px, p
                 criarElem(x, y, w, h, `rgb(${cor.r}, ${cor.g}, ${cor.b})`)
             }
             break;
+        // gera um card de produto com apenas "escrita"
         case 20:
             x = xi + Math.floor(Math.random() * 11) + 20
             y = yi + Math.floor(Math.random() * 11) + 20
@@ -584,6 +611,7 @@ function escolheRet(x, y, w, h, aleatorio, cor, xi, yi, xf, yf, cw, ch, p, px, p
 
             }
             break;
+        // gera um card de produto com botão
         case 21:
 
             x = xi + Math.floor(Math.random() * 11) + 20
@@ -602,12 +630,25 @@ function escolheRet(x, y, w, h, aleatorio, cor, xi, yi, xf, yf, cw, ch, p, px, p
 
             criarElem(x, y, w, h, `rgb(${cor.r}, ${cor.g}, ${cor.b})`)
             y += h + aleatorio
-            h = Math.floor(Math.random() * ((yf - y - Math.floor(Math.random() * 20)) - (ch - h) / 7)) + (ch - h) / 7;
-
+            h = ch + yi - y - aleatorio;
+            
             criarElem(x, y, w, h, `rgb(${cor.r}, ${cor.g}, ${cor.b})`)
 
             break;
+        // card com primeiro retangulo maior e segundo menor
         case 22:
+            x = xi + Math.floor(Math.random() * 11) + 20
+            y = yi + Math.floor(Math.random() * 11) + 20
+            w = xi + cw - (x * 2 - xi)
+            h = Math.floor(Math.random() * (h/4) + h/2)
+
+
+            criarElem(x, y, w, h, `rgb(${cor.r}, ${cor.g}, ${cor.b})`)
+            aleatorio = Math.floor(Math.random() * 10) + 15
+            y += h + aleatorio
+            h = ch + yi - y - aleatorio;
+
+            criarElem(x, y, w, h, `rgb(${cor.r}, ${cor.g}, ${cor.b})`)
 
             break;
         case 23:
@@ -621,7 +662,6 @@ function geraCor(x, y, w, h, tipoCor, ret, aleatorio, cor, corRet) {
         g: Math.floor(Math.random() * (255 * tipoCor.g)),
         b: Math.floor(Math.random() * (255 * tipoCor.b))
     }
-    console.log(cor)
     criarElem(x, y, w, h, `rgb(${cor.r}, ${cor.g}, ${cor.b})`)
     if (ret === 1) {
         corRet = {
@@ -634,7 +674,6 @@ function geraCor(x, y, w, h, tipoCor, ret, aleatorio, cor, corRet) {
     }
 }
 function criarElem(x, y, w, h, cor) {
-    console.log(cor)
     ctx.beginPath()
     ctx.fillStyle = cor
     ctx.fillRect(x, y, w, h)
