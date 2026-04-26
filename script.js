@@ -1,18 +1,39 @@
 const canvas = document.getElementById("canva");
 const ctx = canvas.getContext("2d");
-const scale = window.devicePixelRatio;
+let objetosArray = []
+let razãoX = 1
+let razãoY = 1
+function resizeCanvas() {
+    const scale = window.devicePixelRatio;
 
-canvas.width = 1920 * scale;
-canvas.height = 1080 * scale;
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
 
-canvas.style.width = "1920px";
-canvas.style.height = "1080px";
+    canvas.width = width * scale;
+    canvas.height = height * scale;
+    
+    
+    canvas.style.width = window.innerWidth + "px"
+    canvas.style.height = window.innerHeight + "px"
 
-ctx.scale(scale, scale);
+    ctx.setTransform(scale, 0, 0, scale, 0, 0);
+    for (let i = 0; i < objetosArray.length; i++) {
+        criarElem(objetosArray[i].x, objetosArray[i].y, objetosArray[i].w, objetosArray[i].h, objetosArray[i].cor, 1)
+        
+    }
+    razãoX = canvas.width/1920
+    razãoY = canvas.height/960
+    console.log(canvas.width, razãoX)
+}
+
+
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+
 
 //tamanho minimo que um objeto pode ter de W ou H
 let tipoHeader = 0
-let larguraMax = 1920
+let larguraMax = window.innerWidth
 let value = 0
 // função que seleciona um dos layouts que servirão para limitar os objetos
 function escolheLayout(l) {
@@ -35,13 +56,34 @@ function layout1() {
     // criação dos limites do header
     ctx.beginPath()
     ctx.fillStyle = "rgb(255, 0, 0)"
-    ctx.fillRect(0, 0, larguraMax, 270)
+    ctx.fillRect(0, 0, larguraMax, 240)
+    objetosArray.push({
+        x: 0,
+        y: 0,
+        w: larguraMax,
+        h: 240,
+        cor: "red"
+    })
     // criação dos limites da main
     ctx.fillStyle = "green"
-    ctx.fillRect(0, 270, larguraMax, 540)
+    ctx.fillRect(0, 240, larguraMax, 480)
+    objetosArray.push({
+        x: 0,
+        y: 240,
+        w: larguraMax,
+        h: 480,
+        cor: "green"
+    })
     // criação dos limites do footer
     ctx.fillStyle = "blue"
-    ctx.fillRect(0, 810, larguraMax, 270)
+    ctx.fillRect(0, 720, larguraMax, 240)
+    objetosArray.push({
+        x: 0,
+        y: 720,
+        w: larguraMax,
+        h: 240,
+        cor: "blue"
+    })
 
     // decide o tipo de header de forma aleatória
     tipoHeader = Math.floor(Math.random() * 5) + 1
@@ -61,11 +103,11 @@ function layout1() {
         b: 0,
     }
     // chama a função, e envia o tipo de layout do header
-    escolheHeader(tipoHeader, larguraMax, 270, tipoCorHeader)
+    escolheHeader(tipoHeader, larguraMax, 240, tipoCorHeader)
     // decide o tipo de header de forma aleatória
     tipoMain = Math.floor(Math.random() * 2) + 1
     // chama a função, e envia o tipo de layout do Main
-    escolheMain(tipoMain, larguraMax, 540, tipoCorMain)
+    escolheMain(tipoMain, larguraMax, 480, tipoCorMain)
 
 }
 
@@ -351,27 +393,27 @@ function escolheMain(tipo, w, h, tipoCor) {
     switch (tipo) {
         case 1:
             // quadrado + retangulo + quadrado
-            criarMain1(w, h, 270, tipoCor)
+            criarMain1(w, h, 240, tipoCor)
             break;
 
         case 2:
             // retangulo + quadrado
-            criarMain2(w, h, 270, tipoCor)
+            criarMain2(w, h, 240, tipoCor)
 
             break;
         case 3:
             // quadrado + retangulo
-            criarMain3(w, h, 270, tipoCor)
+            criarMain3(w, h, 240, tipoCor)
 
             break;
         case 4:
             //retangulinhos/retangulos
-            criarMain4(w, h, 270, tipoCor)
+            criarMain4(w, h, 240, tipoCor)
 
             break;
         case 5:
             //retangulinhos/retangulos
-            criarMain5(w, h, 270, tipoCor)
+            criarMain5(w, h, 240, tipoCor)
 
             break;
     }
@@ -389,7 +431,7 @@ function criarMain1(wMa, hMa, yi, tipoCor, x, y, w, h, cx, aleatorio, quant) {
 
     aleatorio = Math.floor(Math.random() * 3) + 20
     geraCor(x, y, w, h, tipoCor, 1, aleatorio)
-    for (let i = 0; i < quant; i++) {
+    for (let i = 0; i < quant - 1; i++) {
         x += cx + w
         aleatorio = Math.floor(Math.random() * 3) + 20
         geraCor(x, y, w, h, tipoCor, 1, aleatorio)
@@ -399,31 +441,31 @@ function criarMain1(wMa, hMa, yi, tipoCor, x, y, w, h, cx, aleatorio, quant) {
 function criarMain2(wMa, hMa, yi, tipoCor, x, y, w, h, cx, cy, aleatorio, quant, gap) {
     quant = Math.floor(Math.random() * 2 + 2)
     gap = Math.floor(Math.random() * 50) + 30
-    x = Math.floor(Math.random() * (wMa/(4 * quant + 1)))
+    x = Math.floor(Math.random() * (wMa / (4 * quant + 1)))
     y = Math.floor(Math.random() * 40 + 30) + yi
-    w = Math.floor((wMa - 2 * x)/quant - (gap * 2))
-    h = hMa/2 - 3 * (y - yi) / 2
+    w = Math.floor((wMa - 2 * x) / quant - (gap * 2))
+    h = hMa / 2 - 3 * (y - yi) / 2
     cx = x
     cy = y
-    
+
     y = hMa - (y - yi) + yi - h
     aleatorio = Math.floor(Math.random() * 9)
     geraCor(x, cy, w, h, tipoCor, 1, aleatorio)
     console.log(aleatorio)
-    
+
     aleatorio = Math.floor(Math.random() * 9)
     geraCor(x, y, w, h, tipoCor, 1, aleatorio)
     console.log(aleatorio)
-    
+
     for (let i = 0; i < quant - 1; i++) {
-        x += w + (wMa - w * quant - cx * 2)/(quant - 1)
+        x += w + (wMa - w * quant - cx * 2) / (quant - 1)
         aleatorio = Math.floor(Math.random() * 9)
         geraCor(x, cy, w, h, tipoCor, 1, aleatorio)
         console.log(aleatorio)
         aleatorio = Math.floor(Math.random() * 9)
         geraCor(x, y, w, h, tipoCor, 1, aleatorio)
         console.log(aleatorio)
-        
+
     }
 }
 // Main2
@@ -631,7 +673,7 @@ function escolheRet(x, y, w, h, aleatorio, cor, xi, yi, xf, yf, cw, ch, p, px, p
             criarElem(x, y, w, h, `rgb(${cor.r}, ${cor.g}, ${cor.b})`)
             y += h + aleatorio
             h = ch + yi - y - aleatorio;
-            
+
             criarElem(x, y, w, h, `rgb(${cor.r}, ${cor.g}, ${cor.b})`)
 
             break;
@@ -640,7 +682,7 @@ function escolheRet(x, y, w, h, aleatorio, cor, xi, yi, xf, yf, cw, ch, p, px, p
             x = xi + Math.floor(Math.random() * 11) + 20
             y = yi + Math.floor(Math.random() * 11) + 20
             w = xi + cw - (x * 2 - xi)
-            h = Math.floor(Math.random() * (h/4) + h/2)
+            h = Math.floor(Math.random() * (h / 4) + h / 2)
 
 
             criarElem(x, y, w, h, `rgb(${cor.r}, ${cor.g}, ${cor.b})`)
@@ -673,7 +715,23 @@ function geraCor(x, y, w, h, tipoCor, ret, aleatorio, cor, corRet) {
 
     }
 }
-function criarElem(x, y, w, h, cor) {
+function criarElem(x, y, w, h, cor, redesenhar) {
+    x = Math.floor(x * razãoX)
+    w = Math.floor(w * razãoX)
+    y = Math.floor(y * razãoY)
+    h = Math.floor(h * razãoY)
+    console.log(x,y,w,h, razãoX, razãoY)
+    if (!redesenhar) {
+        objetosArray.push({
+            x: x,
+            y: y,
+            w: w,
+            h: h,
+            cor: cor
+        })
+    } else {
+
+    }
     ctx.beginPath()
     ctx.fillStyle = cor
     ctx.fillRect(x, y, w, h)
