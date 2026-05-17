@@ -33,7 +33,6 @@ function resizeCanvas() {
     }
     razãoX = canvas.width / 1920
     razãoY = canvas.height / 960
-    console.log(canvas.width, razãoX)
 }
 
 
@@ -41,7 +40,6 @@ window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
 function EscolheLayout (layer, x, y, w, h, W, H, direction, id) {
-    console.log("a")
     if (!objetosArray[layer]) {
         objetosArray[layer] = [];
     }
@@ -50,23 +48,21 @@ function EscolheLayout (layer, x, y, w, h, W, H, direction, id) {
     }
     // direction = row
     if (direction === 0) {
-        nDiv = W / 150
+        nDiv = W / 192
         if (nDiv > 4) {
             nDiv = 4
         }
         quant = Math.floor(Math.random() * (nDiv - 1)) + 1
         nDiv = 1
         
-        console.log(quant)
         for (let i = 0; i <= quant; i++) {
             x = x + w
-            console.log(i)
-            // w min 150
+            // w min 192
             if (quant === i) {
                 w = W
             }
             else {
-                w = Math.floor(Math.random() * ((W / (quant + nDiv)) - 150)) + 150
+                w = Math.floor(Math.random() * ((W / (quant + nDiv)) - 192)) + 192
                 W -= w  
                 nDiv--
             }
@@ -77,27 +73,24 @@ function EscolheLayout (layer, x, y, w, h, W, H, direction, id) {
                 h: H,
             })
         }
-        console.log(objetosArray)
     }
     //direction = column
     else {
-        nDiv = H / 150
+        nDiv = H / 192
         if (nDiv > 4) {
             nDiv = 4
         }
         quant = Math.floor(Math.random() * (nDiv - 1)) + 1
         nDiv = 1
         
-        console.log(quant)
         for (let i = 0; i <= quant; i++) {
             y = y + h
-            console.log(i)
-            // w min 150
+            // w min 192
             if (quant === i) {
                 h = H
             }
             else {
-                h = Math.floor(Math.random() * ((H/ (quant + nDiv)) - 150)) + 150
+                h = Math.floor(Math.random() * ((H/ (quant + nDiv)) - 192)) + 192
                 H -= h  
                 nDiv--
             }
@@ -108,7 +101,6 @@ function EscolheLayout (layer, x, y, w, h, W, H, direction, id) {
                 h: h,
             })
         }
-        console.log(objetosArray)
         
     }
     if (a === 0) {
@@ -118,22 +110,23 @@ function EscolheLayout (layer, x, y, w, h, W, H, direction, id) {
 }
 
 function VerificaDiv(layer, direction, id) {
-    let dividir = 0 
     let divisoes = 0
     for (let i = 0; i < objetosArray[layer][id].length; i++) {
+        let dividir = 0 
         if (direction === 0) {
-            if (objetosArray[layer][id][i].h > 150 * 2) {
-                dividir = Math.floor(Math.random() * 2)   
+            if (objetosArray[layer][id][i].h > 192 * 2) {
+                porcentagem = (objetosArray[layer][id][i].h / 192)
+                dividir = Math.floor(Math.random() * porcentagem) + (porcentagem < 5 ? 0 : 2)  
                 
             }
         }else{
-            if (objetosArray[layer][id][i].w > 150 * 2) {
-                dividir = Math.floor(Math.random() * 2)  
+            if (objetosArray[layer][id][i].w > 192 * 2) {
+                porcentagem = (objetosArray[layer][id][i].w / 192)
+                dividir = Math.floor(Math.random() * porcentagem) + (porcentagem < 5 ? 0 : 2)  
                 
             }
         }
-        if (dividir === 1) {
-            console.log("dividir")
+        if (dividir > 1) {
             EscolheLayout(layer + 1, objetosArray[layer][id][i].x, objetosArray[layer][id][i].y, 0, 0, objetosArray[layer][id][i].w, objetosArray[layer][id][i].h, direction === 0 ? 1 : 0, i)
             divisoes++
         }
@@ -145,19 +138,15 @@ function VerificaDiv(layer, direction, id) {
 
 direction = Math.floor(Math.random() * 2)
 // layer, x, y, w, h, W, H, direction, id
-EscolheLayout(0, 0, 0, 0, 0, 1920, 960, 0, 0)
+EscolheLayout(0, 0, 0, 0, 0, 1920, 960, direction, 0)
 
 function geraCor() {
-    console.log(objetosArray[0][0].length)
     
     for (const camada of objetosArray) {
-        console.log(camada)
         for (const ids of camada) {
-            console.log(ids)
             if (ids) {
                 for (const obj of ids) {
-                    console.log(obj)
-                    criarElem(obj.x, obj.y, obj.w, obj.h, `hsl(${Math.random() * 360}, 100%, 50%)`)
+                    criarElem(obj.x, obj.y, obj.w, obj.h, `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`)
                 }
 
             }
