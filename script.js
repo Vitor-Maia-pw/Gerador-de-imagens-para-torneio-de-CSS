@@ -192,8 +192,8 @@ function VerificaDiv(layer, direction) {
         );
       }
     } else {
-      let confirmW = objetosArray[layer][i].w > 100;
-      let confirmH = objetosArray[layer][i].h > 100;
+      let confirmW = objetosArray[layer][i].w > 100 && objetosArray[layer][i].h > 50;
+      let confirmH = objetosArray[layer][i].h > 100 && objetosArray[layer][i].w > 50;
       if (confirmW || confirmH) {
         objetosArrayE.push(objetosArray[layer][i]);
         objetosArray[layer].splice(i, 1);
@@ -230,7 +230,7 @@ function AddRet(layer, x, y, w, h, W, H, posicaoPai, tipoRet, verificar) {
   if (!objetosArray[layer]) {
     objetosArray[layer] = [];
   }
-  if ((W >= 190 && H >= 50) || (W >= 100 && H >= 90)) {
+  if ((W >= 190 && H >= 50) || (W >= 60 && H >= 190)) {
   } else {
     tipoRet = Math.floor(Math.random() * 2);
   }
@@ -248,8 +248,8 @@ function AddRet(layer, x, y, w, h, W, H, posicaoPai, tipoRet, verificar) {
   switch (tipoRet) {
     // retangulo comum
     case 0:
-      w = randomInt(W * 0.7, W * 0.8);
-      h = randomInt(H * 0.7, H * 0.8);
+      w = randomInt(W * 0.8, W * 0.9);
+      h = randomInt(H * 0.8, H * 0.9);
       x = randomInt(5, W - w - 5) + parentX;
       y = randomInt(5, H - h - 5) + parentY;
       if (verificar === 1) {
@@ -294,9 +294,9 @@ function AddRet(layer, x, y, w, h, W, H, posicaoPai, tipoRet, verificar) {
         x = parentX + Math.floor((W - w) / 2);
 
         const verticalPositions = [
-          parentY,
+          parentY + 5,
           parentY + Math.floor((H - h) / 2),
-          parentY + H - h,
+          parentY + H - h - 5,
         ];
 
         y = verticalPositions[randomInt(0, 2)];
@@ -305,9 +305,9 @@ function AddRet(layer, x, y, w, h, W, H, posicaoPai, tipoRet, verificar) {
         y = parentY + Math.floor((H - h) / 2);
 
         const horizontalPositions = [
-          parentX,
+          parentX + 5,
           parentX + Math.floor((W - w) / 2),
-          parentX + W - w,
+          parentX + W - w - 5,
         ];
 
         x = horizontalPositions[randomInt(0, 2)];
@@ -346,13 +346,21 @@ function AddRet(layer, x, y, w, h, W, H, posicaoPai, tipoRet, verificar) {
 
     //quadrados em sequencia
     case 2:
-      // if (W > H) {
-      //   //terminar isso
-      //   const areaPai = (W - 10);
-      //   const maxRetangles
+      let maxRetangles = 0
+      if (W >= H) {
+        
+        const areaPai = ((W - 10) + (H - 10)) / 2;
+        const minAreaObjeto = 65; // (180 + 40) / 2
+        maxRetangles = (areaPai / minAreaObjeto) >= 6 ? 6 : (areaPai / minAreaObjeto);
 
-      // }
-      const totalRectangles = randomInt(2, 6);
+      } else {
+
+        const areaPai = ((W - 10) + (H - 10)) / 2;
+        const minAreaObjeto = 70; // (180 + 60) / 2
+        maxRetangles = (areaPai / minAreaObjeto) >= 6 ? 6 : (areaPai / minAreaObjeto);
+      
+      }
+      const totalRectangles = randomInt(2, maxRetangles);
       const horizontalLayout = Math.random() < 0.5;
 
       // Each child has its own width and height, derived directly from
@@ -552,7 +560,7 @@ function geraCor() {
         objetosArrayE[i].y,
         objetosArrayE[i].w,
         objetosArrayE[i].h,
-        rgb(`${objetosArrayE[i].color.r}, ${objetosArrayE[i].color.g}, ${objetosArrayE[i].color.b}`),
+        `rgb(${objetosArrayE[i].color.r}, ${objetosArrayE[i].color.g}, ${objetosArrayE[i].color.b})`
       );
     }
   }
@@ -563,7 +571,7 @@ function criarElem(x, y, w, h, cor) {
   w = Math.floor(w * razãoX);
   y = Math.floor(y * razãoX);
   h = Math.floor(h * razãoX);
-
+  console.log(cor)
   ctx.beginPath();
   ctx.fillStyle = cor;
   ctx.fillRect(x, y, w, h);
