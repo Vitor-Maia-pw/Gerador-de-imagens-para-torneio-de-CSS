@@ -1,7 +1,7 @@
 const canvas = document.getElementById("canva");
 const ctx = canvas.getContext("2d");
 let objetosArray = [];
-let objetosArrayExecutado = [];
+let objetosArrayE = [];
 let razãoX = 1;
 let razãoY = 1;
 
@@ -14,7 +14,6 @@ let x = 0;
 let y = 0;
 let porcentagem = 0;
 let a = 0;
-let tipoRet = 0;
 let aleatorio = 0;
 function resizeCanvas() {
   const scale = window.devicePixelRatio;
@@ -29,21 +28,20 @@ function resizeCanvas() {
   canvas.style.height = window.innerHeight + "px";
 
   ctx.setTransform(scale, 0, 0, scale, 0, 0);
-  for (let i = 0; i < objetosArray.length; i++) {
+  for (let i = 0; i < objetosArrayE.length; i++) {
     criarElem(
       objetosArray[i].x,
       objetosArray[i].y,
       objetosArray[i].w,
       objetosArray[i].h,
       objetosArray[i].cor,
-      1,
     );
   }
-  razãoX = canvas.width / 1920;
+  razãoX = canvas.width / 1000;
   razãoY = canvas.height / 960;
 }
 
-window.addEventListener("resize", resizeCanvas);
+window.addEventListener("resize", resizeCanvas());
 resizeCanvas();
 /* A layer serve para organizar os elementos em camadas diferentes, assim os elementos da layer 1 foram criador a partir dos 
 elementos da layer 0 */
@@ -53,7 +51,7 @@ function EscolheLayout(layer, x, y, w, h, W, H, count, direction) {
   }
   // direction = row
   if (direction === 0) {
-    nDiv = W / 192;
+    nDiv = W / 100;
     if (nDiv > 3) {
       nDiv = 3;
     }
@@ -62,28 +60,32 @@ function EscolheLayout(layer, x, y, w, h, W, H, count, direction) {
 
     for (let i = 0; i <= quant; i++) {
       x = x + w;
-      // w min 192
+      // w min 100
       if (quant === i) {
         w = W;
       } else {
         // tem a chance de gerar
-        w = Math.floor(Math.random() * (W - 192 * (quant - i + 1))) + 192;
+        w = Math.floor(Math.random() * (W - 100 * (quant - i + 1))) + 100;
         W -= w;
         nDiv--;
       }
-      console.log(x, y, w, h);
       objetosArray[layer].push({
         x: x,
         y: y,
         w: w,
         h: H,
         count: count + 1,
+        color: {
+          r: Math.floor(Math.random() * 256),
+          g: Math.floor(Math.random() * 256),
+          b: Math.floor(Math.random() * 256),
+        },
       });
     }
   }
   //direction = column
   else {
-    nDiv = H / 192;
+    nDiv = H / 100;
     if (nDiv > 3) {
       nDiv = 3;
     }
@@ -92,11 +94,11 @@ function EscolheLayout(layer, x, y, w, h, W, H, count, direction) {
 
     for (let i = 0; i <= quant; i++) {
       y = y + h;
-      // w min 192
+      // w min 100
       if (quant === i) {
         h = H;
       } else {
-        h = Math.floor(Math.random() * (H - 192 * (quant - i + 1))) + 192;
+        h = Math.floor(Math.random() * (H - 100 * (quant - i + 1))) + 100;
         H -= h;
       }
 
@@ -106,6 +108,11 @@ function EscolheLayout(layer, x, y, w, h, W, H, count, direction) {
         w: W,
         h: h,
         count: count + 1,
+        color: {
+          r: Math.floor(Math.random() * 256),
+          g: Math.floor(Math.random() * 256),
+          b: Math.floor(Math.random() * 256),
+        },
       });
     }
   }
@@ -115,158 +122,170 @@ function EscolheLayout(layer, x, y, w, h, W, H, count, direction) {
 
 let ultimaVolta = 0;
 function VerificaDiv(layer, direction) {
-  let divisoes = 0;
   for (let i = 0; i < objetosArray[layer].length; i++) {
-    if (objetosArray[layer][i] === 0) {
-    } else {
-      let dividir = 0;
-      if (direction === 0) {
-        if (objetosArray[layer][i].h > 192 * 2) {
-          porcentagem = objetosArray[layer][i].h / 192;
-          dividir =
-            Math.floor(Math.random() * porcentagem) + (porcentagem < 0 ? 0 : 2);
-        }
-      } else {
-        if (objetosArray[layer][i].w > 192 * 2) {
-          porcentagem = objetosArray[layer][i].w / 192;
-          dividir =
-            Math.floor(Math.random() * porcentagem) + (porcentagem < 0 ? 0 : 2);
-        }
+    let dividir = 0;
+    if (direction === 0) {
+      if (objetosArray[layer][i].h > 100 * 2) {
+        porcentagem = objetosArray[layer][i].h / 100;
+        dividir =
+          Math.floor(Math.random() * porcentagem) + (porcentagem < 2 ? 0 : 2);
       }
+    } else if (direction === 1) {
+      if (objetosArray[layer][i].w > 100 * 2) {
+        porcentagem = objetosArray[layer][i].w / 100;
+        dividir =
+          Math.floor(Math.random() * porcentagem) + (porcentagem < 2 ? 0 : 2);
+      }
+    } else {
+      let maiorLado = Math.max(
+        objetosArray[layer][i].w,
+        objetosArray[layer][i].h,
+      );
+      if (maiorLado > 100 * 2) {
+        porcentagem = maiorLado / 100;
+        dividir =
+          Math.floor(Math.random() * porcentagem) + (porcentagem < 2 ? 0 : 2);
+      }
+    }
+    // verifica se vai cortar ou adicionar objeto
 
-      if (dividir > 0) {
-        if (objetosArray[layer][i].count < 3) {
-          aleatorio = Math.floor(Math.random() * 2);
-        } else {
-          aleatorio = 1;
-        }
-        if (aleatorio === 0) {
-          objetosArrayExecutado.push(objetosArray[layer][i]);
-          objetosArray[layer].splice(i, 1);
-          objetosArray[layer].unshift(0);
-          let ultimoObjetoExecutado = objetosArrayExecutado.length - 1;
-          EscolheLayout(
-            layer + 1,
-            objetosArrayExecutado[ultimoObjetoExecutado].x,
-            objetosArrayExecutado[ultimoObjetoExecutado].y,
-            0,
-            0,
-            objetosArrayExecutado[ultimoObjetoExecutado].w,
-            objetosArrayExecutado[ultimoObjetoExecutado].h,
-            objetosArrayExecutado[ultimoObjetoExecutado].count,
-            direction === 0 ? 1 : 0,
-          );
-        } else {
-          objetosArrayExecutado.push(objetosArray[layer][i]);
-          objetosArray[layer].splice(i, 1);
-          objetosArray[layer].unshift(0);
-          let ultimoObjetoExecutado = objetosArrayExecutado.length - 1;
-          AddRet(
-            layer + 1,
-            objetosArrayExecutado[ultimoObjetoExecutado].x,
-            objetosArrayExecutado[ultimoObjetoExecutado].y,
-            0,
-            0,
-            objetosArrayExecutado[ultimoObjetoExecutado].w,
-            objetosArrayExecutado[ultimoObjetoExecutado].h,
-            objetosArrayExecutado[ultimoObjetoExecutado].count,
-          );
-        }
-        // se for o primeiro elemento da função, é impossivel a layerAtual ser diferente de layer
-        // se o id for maior que 0, a layerAtual pode ser diferente de layer
-        // se id for 0, e não tiver mais IDs ele pode ser diferente de layer
-        //
-        divisoes++;
+    if (dividir > 0) {
+      if (objetosArray[layer][i].count < 3) {
+        porcentagem = (objetosArray[layer][i].count * 2.5) / 10 + 1 / 10;
+        cortar = Math.random() > porcentagem;
       } else {
-        objetosArrayExecutado.push(objetosArray[layer][i]);
+        cortar = false;
+      }
+      if (cortar) {
+        objetosArrayE.push(objetosArray[layer][i]);
         objetosArray[layer].splice(i, 1);
         objetosArray[layer].unshift(0);
+        let ultimoObjetoExecutado = objetosArrayE.length - 1;
+        EscolheLayout(
+          layer + 1,
+          objetosArrayE[ultimoObjetoExecutado].x,
+          objetosArrayE[ultimoObjetoExecutado].y,
+          0,
+          0,
+          objetosArrayE[ultimoObjetoExecutado].w,
+          objetosArrayE[ultimoObjetoExecutado].h,
+          objetosArrayE[ultimoObjetoExecutado].count,
+          direction === 0 ? 1 : 0,
+        );
+      } else {
+        objetosArrayE.push(objetosArray[layer][i]);
+        objetosArray[layer].splice(i, 1);
+        objetosArray[layer].unshift(0);
+        let ultimoObjetoExecutado = objetosArrayE.length - 1;
+
+        AddRet(
+          layer + 1,
+          objetosArrayE[ultimoObjetoExecutado].x,
+          objetosArrayE[ultimoObjetoExecutado].y,
+          0,
+          0,
+          objetosArrayE[ultimoObjetoExecutado].w,
+          objetosArrayE[ultimoObjetoExecutado].h,
+          ultimoObjetoExecutado,
+          Math.floor(Math.random() * 3),
+          1,
+        );
       }
-      if (layer === 0 && i === objetosArray[layer].length - 1) {
-        ultimaVolta++;
+    } else {
+      let confirmW = objetosArray[layer][i].w > 100;
+      let confirmH = objetosArray[layer][i].h > 100;
+      if (confirmW || confirmH) {
+        objetosArrayE.push(objetosArray[layer][i]);
+        objetosArray[layer].splice(i, 1);
+        objetosArray[layer].unshift(0);
+
+        let ultimoObjetoExecutado = objetosArrayE.length - 1;
+        AddRet(
+          layer + 1,
+          objetosArrayE[ultimoObjetoExecutado].x,
+          objetosArrayE[ultimoObjetoExecutado].y,
+          0,
+          0,
+          objetosArrayE[ultimoObjetoExecutado].w,
+          objetosArrayE[ultimoObjetoExecutado].h,
+          ultimoObjetoExecutado,
+          Math.floor(Math.random() * 3),
+          0,
+        );
       }
+    }
+    if (layer === 0 && i === objetosArray[layer].length - 1) {
+      ultimaVolta++;
     }
   }
 
   if (ultimaVolta > 0) {
     geraCor();
-    console.log(objetosArrayExecutado);
+    console.log(objetosArrayE);
     console.log(objetosArray);
   }
 }
 
-function AddRet(layer, x, y, w, h, W, H, count) {
+function AddRet(layer, x, y, w, h, W, H, posicaoPai, tipoRet, verificar) {
   if (!objetosArray[layer]) {
     objetosArray[layer] = [];
   }
+  if ((W >= 190 && H >= 50) || (W >= 100 && H >= 90)) {
+  } else {
+    tipoRet = Math.floor(Math.random() * 2);
+  }
 
-  tipoRet = 0;
-  direction = Math.floor(Math.random() * 2);
-  // if (w > 192 * 2 + 50 && h > 192 * 2 + 50) {
-  //     tipoRet = Math.floor(Math.random() * 2)
-  // }
+  direction = null;
+  const ratio = W / H;
+  const parentX = x;
+  const parentY = y;
+  if (objetosArrayE[posicaoPai].color) {
+    corPai = objetosArrayE[posicaoPai].color;
+  } else {
+    corPai = { r: 0, g: 0, b: 0 };
+  }
+
   switch (tipoRet) {
+    // retangulo comum
     case 0:
-      // // // AddRet(layer, id, i)
-      w =
-        Math.floor(Math.random() * (W * (9 / 10) - (W * 4) / 5)) + (W * 4) / 5;
-      h =
-        Math.floor(Math.random() * (H * (9 / 10) - (H * 4) / 5)) + (H * 4) / 5;
-      x = Math.floor(Math.random() * (W - w - 5)) + x + 5;
-      y = Math.floor(Math.random() * (H - h - 5)) + y + 5;
-      console.log(x, y, w, h);
-      objetosArray[layer].push({
-        x: x,
-        y: y,
-        w: w,
-        h: h,
-        count: 0,
-      });
-
-      VerificaDiv(layer, direction);
-      break;
-
-    case 1:
-      const parentX = x;
-      const parentY = y;
-
-      // Use a square between 25% and 40% of the parent's smallest dimension.
-      const minSide = Math.max(1, Math.floor(Math.min(W, H) * 0.3));
-      const maxSide = Math.max(minSide, Math.floor(Math.min(W, H) * 0.45));
-
-      for (let i = 0; i < 2; i++) {
-        w = randomInt(minSide, maxSide);
-        h = w;
-
-        const isLeftSquare = i === 0;
-        const alignTop = Math.random() < 0.5;
-
-        // First square stays left; second square stays right.
-        x = isLeftSquare ? parentX : parentX + W - w + 5;
-
-        // Each square independently chooses top or bottom.
-        y = alignTop ? parentY : parentY + H - h + 5;
-
+      w = randomInt(W * 0.7, W * 0.8);
+      h = randomInt(H * 0.7, H * 0.8);
+      x = randomInt(5, W - w - 5) + parentX;
+      y = randomInt(5, H - h - 5) + parentY;
+      if (verificar === 1) {
         objetosArray[layer].push({
           x: x,
           y: y,
           w: w,
           h: h,
           count: 0,
+          color: {
+            r: Math.abs(Math.floor(Math.random() * 256) - corPai.r),
+            g: Math.abs(Math.floor(Math.random() * 256) - corPai.g),
+            b: Math.abs(Math.floor(Math.random() * 256) - corPai.b),
+          },
+        });
+
+        VerificaDiv(layer, direction);
+      } else {
+        objetosArrayE.push({
+          x: x,
+          y: y,
+          w: w,
+          h: h,
+          count: 0,
+          color: {
+            r: Math.abs(Math.floor(Math.random() * 256) - corPai.r),
+            g: Math.abs(Math.floor(Math.random() * 256) - corPai.g),
+            b: Math.abs(Math.floor(Math.random() * 256) - corPai.b),
+          },
         });
       }
-
-      VerificaDiv(layer, direction);
       break;
-    case 2:
-      const parentX = x;
-      const parentY = y;
-
-      const minSide = Math.max(1, Math.floor(Math.min(W, H) * 0.25));
-      const maxSide = Math.max(minSide, Math.floor(Math.min(W, H) * 0.45));
-
-      w = randomInt(minSide, maxSide);
-      h = w;
+    // quadrado centralizado
+    case 1:
+      w = randomInt(W * 0.7, W * 0.8);
+      h = randomInt(H * 0.7, H * 0.8);
 
       const horizontalCenterMode = Math.random() < 0.5;
 
@@ -294,55 +313,71 @@ function AddRet(layer, x, y, w, h, W, H, count) {
         x = horizontalPositions[randomInt(0, 2)];
       }
 
-      objetosArray[layer].push({
-        x: x,
-        y: y,
-        w: w,
-        h: h,
-        count: 0,
-      });
+      if (verificar === 1) {
+        objetosArray[layer].push({
+          x: x,
+          y: y,
+          w: w,
+          h: h,
+          count: 0,
+          color: {
+            r: Math.abs(Math.floor(Math.random() * 256) - corPai.r),
+            g: Math.abs(Math.floor(Math.random() * 256) - corPai.g),
+            b: Math.abs(Math.floor(Math.random() * 256) - corPai.b),
+          },
+        });
 
-      VerificaDiv(layer, direction);
+        VerificaDiv(layer, direction);
+      } else {
+        objetosArrayE.push({
+          x: x,
+          y: y,
+          w: w,
+          h: h,
+          count: 0,
+          color: {
+            r: Math.abs(Math.floor(Math.random() * 256) - corPai.r),
+            g: Math.abs(Math.floor(Math.random() * 256) - corPai.g),
+            b: Math.abs(Math.floor(Math.random() * 256) - corPai.b),
+          },
+        });
+      }
       break;
-    case 2:
-      const parentX = x;
-      const parentY = y;
 
-      const totalRectangles = randomInt(3, 6);
+    //quadrados em sequencia
+    case 2:
+      // if (W > H) {
+      //   //terminar isso
+      //   const areaPai = (W - 10);
+      //   const maxRetangles
+
+      // }
+      const totalRectangles = randomInt(2, 6);
       const horizontalLayout = Math.random() < 0.5;
 
-      // Parent and child average sizes:
-      // parentAverage = (W + H) / 2
-      // childAverage normally stays between 20% and 40% of it.
-      const parentAverage = (W + H) / 2;
-      const minChildAverage = parentAverage * 0.2;
-      const maxChildAverage = parentAverage * 0.4;
+      // Each child has its own width and height, derived directly from
+      // the parent's width (W) and height (H), never from an average.
+      const preferredGap = 10;
+      const minChildWidth = W * 0.25;
+      const maxChildWidth = W * 0.8;
+      const minChildHeight = H * 0.25;
+      const maxChildHeight = H * 0.8;
 
-      // Same gap between all neighboring rectangles.
-      const gap = Math.max(1, Math.floor(Math.min(W, H) * 0.05));
-
-      // Keep each child rectangle proportional to the parent.
-      const ratio = W / H;
-
-      // Returns the largest possible child average size for a grid.
-      function getMaximumChildAverage(columns, rows) {
-        const maxChildWidth = (W - (columns - 1) * gap) / columns;
-        const maxChildHeight = (H - (rows - 1) * gap) / rows;
-
-        // Convert maximum width/height back into maximum average size
-        // while preserving the W:H aspect ratio.
-        const maxAverageFromWidth = (maxChildWidth * (ratio + 1)) / (2 * ratio);
-        const maxAverageFromHeight = (maxChildHeight * (ratio + 1)) / 2;
-
-        return Math.min(maxAverageFromWidth, maxAverageFromHeight);
+      // Calculates the free size for one child in a given grid. The gap is
+      // reduced for small parents so the grid always remains inside it.
+      function getGridCapacity(columns, rows) {
+        return {
+          maxWidth: (W - (columns + 1) * preferredGap) / columns,
+          maxHeight: (H - (rows + 1) * preferredGap) / rows,
+        };
       }
 
       let columns;
       let rows;
-      let maximumPossibleAverage;
+      let gridCapacity;
 
       // Find the layout with the most items in the primary direction
-      // while keeping child size normally at least 20% of parent average.
+      // while keeping the desired minimum width and height for each child.
       if (horizontalLayout) {
         for (
           let possibleColumns = totalRectangles;
@@ -350,15 +385,15 @@ function AddRet(layer, x, y, w, h, W, H, count) {
           possibleColumns--
         ) {
           const possibleRows = Math.ceil(totalRectangles / possibleColumns);
-          const maxAverage = getMaximumChildAverage(
-            possibleColumns,
-            possibleRows,
-          );
+          const capacity = getGridCapacity(possibleColumns, possibleRows);
 
-          if (maxAverage >= minChildAverage) {
+          if (
+            capacity.maxWidth >= minChildWidth &&
+            capacity.maxHeight >= minChildHeight
+          ) {
             columns = possibleColumns;
             rows = possibleRows;
-            maximumPossibleAverage = maxAverage;
+            gridCapacity = capacity;
             break;
           }
         }
@@ -369,24 +404,24 @@ function AddRet(layer, x, y, w, h, W, H, count) {
           possibleRows--
         ) {
           const possibleColumns = Math.ceil(totalRectangles / possibleRows);
-          const maxAverage = getMaximumChildAverage(
-            possibleColumns,
-            possibleRows,
-          );
+          const capacity = getGridCapacity(possibleColumns, possibleRows);
 
-          if (maxAverage >= minChildAverage) {
+          if (
+            capacity.maxWidth >= minChildWidth &&
+            capacity.maxHeight >= minChildHeight
+          ) {
             columns = possibleColumns;
             rows = possibleRows;
-            maximumPossibleAverage = maxAverage;
+            gridCapacity = capacity;
             break;
           }
         }
       }
 
-      // Fallback for very small parents: choose the grid that permits
-      // the largest possible children, even if they must be below 20%.
-      if (maximumPossibleAverage === undefined) {
-        maximumPossibleAverage = 0;
+      // Fallback for constrained parents: choose the grid with the largest
+      // available area for one child, even if it is below the preferred size.
+      if (!gridCapacity) {
+        let largestAvailableArea = -1;
 
         for (
           let possibleColumns = 1;
@@ -394,43 +429,36 @@ function AddRet(layer, x, y, w, h, W, H, count) {
           possibleColumns++
         ) {
           const possibleRows = Math.ceil(totalRectangles / possibleColumns);
-          const maxAverage = getMaximumChildAverage(
-            possibleColumns,
-            possibleRows,
-          );
+          const capacity = getGridCapacity(possibleColumns, possibleRows);
+          const availableArea = capacity.maxWidth * capacity.maxHeight;
 
-          if (maxAverage > maximumPossibleAverage) {
+          if (availableArea > largestAvailableArea) {
             columns = possibleColumns;
             rows = possibleRows;
-            maximumPossibleAverage = maxAverage;
+            gridCapacity = capacity;
+            largestAvailableArea = availableArea;
           }
         }
       }
+      // Choose dimensions independently, limited by both the desired size
+      // and the maximum space that this grid provides.
+      const heightLimit = Math.min(maxChildHeight, gridCapacity.maxHeight);
+      const widthLimit = Math.min(maxChildWidth, gridCapacity.maxWidth);
+      const widthStart = Math.min(minChildWidth, widthLimit);
+      const heightStart = Math.min(minChildHeight, heightLimit);
 
-      // Select the child size.
-      let childAverage;
+      w = widthStart + Math.random() * (widthLimit - widthStart);
+      h = heightStart + Math.random() * (heightLimit - heightStart);
 
-      if (maximumPossibleAverage >= minChildAverage) {
-        const upperLimit = Math.min(maxChildAverage, maximumPossibleAverage);
-
-        childAverage =
-          minChildAverage + Math.random() * (upperLimit - minChildAverage);
-      } else {
-        // Leave a little spare room for very constrained parents.
-        childAverage = maximumPossibleAverage * 0.9;
-      }
-
-      // Convert the chosen average back to proportional width and height.
-      w = (2 * childAverage * ratio) / (ratio + 1);
-      h = (2 * childAverage) / (ratio + 1);
+      const finalGapX = (W - w * columns) / (columns + 1);
+      const finalGapY = (H - h * rows) / (rows + 1);
 
       // Center the complete grid inside the parent.
-      const usedWidth = columns * w + (columns - 1) * gap;
-      const usedHeight = rows * h + (rows - 1) * gap;
+      const usedWidth = columns * w + (columns + 1) * finalGapX;
+      const usedHeight = rows * h + (rows + 1) * finalGapY;
 
-      const startX = parentX + (W - usedWidth) / 2;
-      const startY = parentY + (H - usedHeight) / 2;
-
+      const startX = parentX + (W - usedWidth) / 2 + finalGapX;
+      const startY = parentY + (H - usedHeight) / 2 + finalGapY;
       for (let i = 0; i < totalRectangles; i++) {
         let row;
         let column;
@@ -445,8 +473,55 @@ function AddRet(layer, x, y, w, h, W, H, count) {
           row = i % rows;
         }
 
-        x = startX + column * (w + gap);
-        y = startY + row * (h + gap);
+        x = startX + column * (w + finalGapX);
+        y = startY + row * (h + finalGapY);
+
+        if (verificar === 1) {
+          objetosArray[layer].push({
+            x: x,
+            y: y,
+            w: w,
+            h: h,
+            count: 0,
+            color: {
+              r: Math.abs(Math.floor(Math.random() * 256) - corPai.r),
+              g: Math.abs(Math.floor(Math.random() * 256) - corPai.g),
+              b: Math.abs(Math.floor(Math.random() * 256) - corPai.b),
+            },
+          });
+
+          VerificaDiv(layer, direction);
+        } else {
+          objetosArrayE.push({
+            x: x,
+            y: y,
+            w: w,
+            h: h,
+            count: 0,
+            color: {
+              r: Math.abs(Math.floor(Math.random() * 256) - corPai.r),
+              g: Math.abs(Math.floor(Math.random() * 256) - corPai.g),
+              b: Math.abs(Math.floor(Math.random() * 256) - corPai.b),
+            },
+          });
+        }
+      }
+      break;
+    // dois quadrados em lados opostos
+    case 3:
+      minSide = Math.max(1, Math.floor(Math.min(W, H) * 0.4));
+      maxSide = Math.max(minSide, Math.floor(Math.min(W, H) * 0.47));
+
+      for (let i = 0; i < 2; i++) {
+        w = randomInt(minSide, maxSide);
+        h = w;
+
+        const isLeftSquare = i === 0;
+        const alignTop = Math.random() < 0.5;
+
+        x = isLeftSquare ? parentX : parentX + W - (w + 5);
+
+        y = alignTop ? parentY : parentY + H - (h + 5);
 
         objetosArray[layer].push({
           x: x,
@@ -454,33 +529,40 @@ function AddRet(layer, x, y, w, h, W, H, count) {
           w: w,
           h: h,
           count: 0,
+          color: {
+            r: Math.abs(Math.floor(Math.random() * 256) - corPai.r),
+            g: Math.abs(Math.floor(Math.random() * 256) - corPai.g),
+            b: Math.abs(Math.floor(Math.random() * 256) - corPai.b),
+          },
         });
       }
 
-      VerificaDiv(layer, direction);
+      if (verificar === 1) {
+        VerificaDiv(layer, direction);
+      }
       break;
   }
 }
 
-direction = Math.floor(Math.random() * 2);
-// layer, x, y, w, h, W, H, direction, id
-
 function geraCor() {
-  for (let i = 0; i < objetosArrayExecutado.length; i++) {
-    criarElem(
-      objetosArrayExecutado[i].x,
-      objetosArrayExecutado[i].y,
-      objetosArrayExecutado[i].w,
-      objetosArrayExecutado[i].h,
-      `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`,
-    );
+  for (let i = 0; i < objetosArrayE.length; i++) {
+    if (objetosArrayE[i].color) {
+      criarElem(
+        objetosArrayE[i].x,
+        objetosArrayE[i].y,
+        objetosArrayE[i].w,
+        objetosArrayE[i].h,
+        rgb(`${objetosArrayE[i].color.r}, ${objetosArrayE[i].color.g}, ${objetosArrayE[i].color.b}`),
+      );
+    }
   }
 }
+
 function criarElem(x, y, w, h, cor) {
   x = Math.floor(x * razãoX);
   w = Math.floor(w * razãoX);
-  y = Math.floor(y * razãoY);
-  h = Math.floor(h * razãoY);
+  y = Math.floor(y * razãoX);
+  h = Math.floor(h * razãoX);
 
   ctx.beginPath();
   ctx.fillStyle = cor;
@@ -494,24 +576,11 @@ function randomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-EscolheLayout(0, 0, 0, 0, 0, 1920, 960, 0, direction, 0);
-// x = Math.random() * (xf - xi - tamMinX) + xi;
-// y = Math.random() * (ch - tamMinY) + yi;
-// 6 9 12
-/*
-g: 6
-m: 9
-p: 12
+direction = Math.floor(Math.random() * 2);
+criarElem(0, 0, 800, 800, "pink");
+criarElem(0, 900, 150, 100, "white");
+EscolheLayout(0, 0, 0, 0, 0, 800, 800, 0, direction, 0);
 
-G: 6
-M: 9
-P: 12
-
-g / G = 83
-m / M =
-p / P =
-
-300 100 = p 200 = m 283 = g
-*/
-
-// alterar o colums - 1 para colums + 1
+// coisas para fazer:
+// 1. adicionar elementos no final dos cortes
+// 2. acrescentar niveis de dificuldade
