@@ -76,10 +76,10 @@ function EscolheLayout(layer, x, y, w, h, W, H, count, direction) {
         h: H,
         count: count + 1,
         color: {
-          r: Math.floor(Math.random() * 256),
-          g: Math.floor(Math.random() * 256),
-          b: Math.floor(Math.random() * 256),
-        },
+            r: Math.abs(Math.floor(Math.random() * 256)),
+            g: Math.abs(Math.floor(Math.random() * 256)),
+            b: Math.abs(Math.floor(Math.random() * 256)),
+          },
       });
     }
   }
@@ -109,10 +109,10 @@ function EscolheLayout(layer, x, y, w, h, W, H, count, direction) {
         h: h,
         count: count + 1,
         color: {
-          r: Math.floor(Math.random() * 256),
-          g: Math.floor(Math.random() * 256),
-          b: Math.floor(Math.random() * 256),
-        },
+            r: Math.abs(Math.floor(Math.random() * 256)),
+            g: Math.abs(Math.floor(Math.random() * 256)),
+            b: Math.abs(Math.floor(Math.random() * 256)),
+          },
       });
     }
   }
@@ -194,11 +194,15 @@ function VerificaDiv(layer, direction) {
     } else {
       let confirmW = objetosArray[layer][i].w > 100 && objetosArray[layer][i].h > 50;
       let confirmH = objetosArray[layer][i].h > 100 && objetosArray[layer][i].w > 50;
-      if (confirmW || confirmH) {
+      if(objetosArray[layer][i]){
+
         objetosArrayE.push(objetosArray[layer][i]);
         objetosArray[layer].splice(i, 1);
         objetosArray[layer].unshift(0);
-
+      
+      }
+      
+      if (confirmW || confirmH) {
         let ultimoObjetoExecutado = objetosArrayE.length - 1;
         AddRet(
           layer + 1,
@@ -346,30 +350,32 @@ function AddRet(layer, x, y, w, h, W, H, posicaoPai, tipoRet, verificar) {
 
     //quadrados em sequencia
     case 2:
+      let horizontalLayout;
       let maxRetangles = 0
       if (W >= H) {
         
         const areaPai = ((W - 10) + (H - 10)) / 2;
         const minAreaObjeto = 65; // (180 + 40) / 2
         maxRetangles = (areaPai / minAreaObjeto) >= 6 ? 6 : (areaPai / minAreaObjeto);
-
+        horizontalLayout = true;
+        
       } else {
-
+        
+        horizontalLayout = false;
         const areaPai = ((W - 10) + (H - 10)) / 2;
         const minAreaObjeto = 70; // (180 + 60) / 2
         maxRetangles = (areaPai / minAreaObjeto) >= 6 ? 6 : (areaPai / minAreaObjeto);
       
       }
       const totalRectangles = randomInt(2, maxRetangles);
-      const horizontalLayout = Math.random() < 0.5;
 
       // Each child has its own width and height, derived directly from
       // the parent's width (W) and height (H), never from an average.
       const preferredGap = 10;
-      const minChildWidth = W * 0.25;
-      const maxChildWidth = W * 0.8;
-      const minChildHeight = H * 0.25;
-      const maxChildHeight = H * 0.8;
+      const minChildWidth = W * 0.5;
+      const maxChildWidth = W * 0.9;
+      const minChildHeight = H * 0.5;
+      const maxChildHeight = H * 0.9;
 
       // Calculates the free size for one child in a given grid. The gap is
       // reduced for small parents so the grid always remains inside it.
