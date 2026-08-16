@@ -55,7 +55,7 @@ function EscolheLayout(layer, x, y, w, h, W, H, count, direction, layerCor) {
     if (nDiv > 3) {
       nDiv = 3;
     }
-    quant = Math.floor(Math.random() * (nDiv - 1)) + 1;
+    quant = Math.ceil(Math.random() * (nDiv - 1));
     nDiv = 1;
 
     for (let i = 0; i <= quant; i++) {
@@ -121,13 +121,13 @@ function VerificaDiv(layer, direction, layerCor) {
       if (objetosArray[layer][i].h > 100 * 2) {
         porcentagem = objetosArray[layer][i].h / 100;
         dividir =
-          Math.floor(Math.random() * porcentagem) + (porcentagem < 2 ? 0 : 2);
+          Math.floor(Math.random() * porcentagem) + (porcentagem < 3 ? 0 : 2);
       }
     } else if (direction === 1) {
       if (objetosArray[layer][i].w > 100 * 2) {
         porcentagem = objetosArray[layer][i].w / 100;
         dividir =
-          Math.floor(Math.random() * porcentagem) + (porcentagem < 2 ? 0 : 2);
+          Math.floor(Math.random() * porcentagem) + (porcentagem < 3 ? 0 : 2);
       }
     } else {
       let maiorLado = Math.max(
@@ -137,7 +137,7 @@ function VerificaDiv(layer, direction, layerCor) {
       if (maiorLado > 100 * 2) {
         porcentagem = maiorLado / 100;
         dividir =
-          Math.floor(Math.random() * porcentagem) + (porcentagem < 2 ? 0 : 2);
+          Math.floor(Math.random() * porcentagem) + (porcentagem < 3 ? 0 : 2);
       }
     }
     // verifica se vai cortar ou adicionar objeto
@@ -160,7 +160,6 @@ function VerificaDiv(layer, direction, layerCor) {
       objetosArray[layer].unshift(0);
       let ultimoObjetoExecutado = objetosArrayE.length - 1;
       if (cortar) {
-        let ultimoObjetoExecutado = objetosArrayE.length - 1;
         EscolheLayout(
           layer + 1,
           objetosArrayE[ultimoObjetoExecutado].x,
@@ -174,7 +173,6 @@ function VerificaDiv(layer, direction, layerCor) {
           layerCor
         );
       } else {
-
         AddRet(
           layer + 1,
           objetosArrayE[ultimoObjetoExecutado].x,
@@ -248,10 +246,14 @@ function AddRet(layer, x, y, w, h, W, H, posicaoPai, tipoRet, verificar, layerCo
   console.log(`corPai: ${corPai.r}, ${corPai.g}, ${corPai.b}`);
   // define a cor do filho aleatoriamente com base na cor do pai
   let color = {
-    r: Math.abs(Math.floor(Math.random() * 100) + corPai.r + 100) % 255,
-    g: Math.abs(Math.floor(Math.random() * 100) + corPai.g + 100) % 255,
-    b: Math.abs(Math.floor(Math.random() * 100) + corPai.b + 100) % 255,
+    r: Math.abs(Math.floor(Math.random() * 100) + corPai.r + 77.5) % 255,
+    g: Math.abs(Math.floor(Math.random() * 100) + corPai.g + 77.5) % 255,
+    b: Math.abs(Math.floor(Math.random() * 100) + corPai.b + 77.5) % 255,
   };
+  if (color.r - color.g < 40 && color.r - color.b < 40 && color.g - color.b < 40) {
+    aleatorio = Math.random() * 3;
+    aleatorio < 1 ? color.r = (color.r + 100) % 255 : aleatorio < 2 ? color.g = (color.g + 100) % 255 : color.b = (color.b + 100) % 255;
+  }
   console.log(color)
   switch (tipoRet) {
     // retangulo comum
@@ -267,6 +269,7 @@ function AddRet(layer, x, y, w, h, W, H, posicaoPai, tipoRet, verificar, layerCo
           w: w,
           h: h,
           count: 0,
+          tipo: 0,
           color
         });
 
@@ -278,6 +281,8 @@ function AddRet(layer, x, y, w, h, W, H, posicaoPai, tipoRet, verificar, layerCo
           w: w,
           h: h,
           count: 0,
+          tipo: 0,
+          ultimo: "ultimo",
           color
         });
       }
@@ -320,6 +325,7 @@ function AddRet(layer, x, y, w, h, W, H, posicaoPai, tipoRet, verificar, layerCo
           w: w,
           h: h,
           count: 0,
+          tipo: 1,
           color
         });
 
@@ -331,6 +337,8 @@ function AddRet(layer, x, y, w, h, W, H, posicaoPai, tipoRet, verificar, layerCo
           w: w,
           h: h,
           count: 0,
+          tipo: 1,
+          ultimo:"ultimo",
           color
         });
       }
@@ -461,39 +469,7 @@ function AddRet(layer, x, y, w, h, W, H, posicaoPai, tipoRet, verificar, layerCo
 
       const startX = parentX + (W - usedWidth) / 2 + finalGapX;
       const startY = parentY + (H - usedHeight) / 2 + finalGapY;
-
-      // Um canal é livre para variar aleatoriamente. Os outros dois devem
-      // ficar afastados do respectivo valor da cor do pai.
-      const distanciaMinimaDaCorPai = 80;
-
-      function gerarCanalDistanteDoPai(valorPai) {
-        const maiorValorAbaixo = valorPai - distanciaMinimaDaCorPai;
-        const menorValorAcima = valorPai + distanciaMinimaDaCorPai;
-        const quantidadeAbaixo = Math.max(0, maiorValorAbaixo + 1);
-        const quantidadeAcima = Math.max(0, 256 - menorValorAcima);
-
-        // Sorteia entre os intervalos válidos para manter a distância mínima.
-        if (Math.random() * (quantidadeAbaixo + quantidadeAcima) < quantidadeAbaixo) {
-          return randomInt(0, maiorValorAbaixo);
-        }
-
-        return randomInt(menorValorAcima, 255);
-      }
-
-      function gerarCorFilho() {
-        const canais = ["r", "g", "b"];
-        const canalLivre = canais[randomInt(0, canais.length - 1)];
-        const corFilho = {};
-
-        canais.forEach((canal) => {
-          corFilho[canal] = canal === canalLivre
-            ? randomInt(0, 255)
-            : gerarCanalDistanteDoPai(corPai[canal]);
-        });
-
-        return corFilho;
-      }
-
+      
       for (let i = 0; i < totalRectangles; i++) {
         let row;
         let column;
@@ -518,7 +494,8 @@ function AddRet(layer, x, y, w, h, W, H, posicaoPai, tipoRet, verificar, layerCo
             w: w,
             h: h,
             count: 0,
-            color: gerarCorFilho(),
+            tipo: 2,
+            color
           });
 
           VerificaDiv(layer, direction, layer);
@@ -529,7 +506,9 @@ function AddRet(layer, x, y, w, h, W, H, posicaoPai, tipoRet, verificar, layerCo
             w: w,
             h: h,
             count: 0,
-            color: gerarCorFilho(),
+            tipo: 2,
+            ultimo:"ultimo",
+            color
           });
         }
       }
@@ -556,6 +535,7 @@ function AddRet(layer, x, y, w, h, W, H, posicaoPai, tipoRet, verificar, layerCo
           w: w,
           h: h,
           count: 0,
+          tipo: 0,
           color
         });
       }
@@ -567,11 +547,7 @@ function AddRet(layer, x, y, w, h, W, H, posicaoPai, tipoRet, verificar, layerCo
   }
 }
 
-function geraCorPai(layer) {
-  if (!coresPai[layer - 1]) {
-    coresPai[layer - 1] = [];
-  }
-}
+
 
 function geraCor() {
   for (let i = 0; i < objetosArrayE.length; i++) {
@@ -612,7 +588,10 @@ coresPai.push([{
 }]);
 criarElem(0, 0, 800, 800, "rgb(134, 134, 134)");
 criarElem(0, 900, 150, 100, "rgb(255, 255, 255)");
-EscolheLayout(0, 0, 0, 0, 0, 800, 800, 0, direction, 0);
+//(layer, x, y, w, h, W, H, count, direction, layerCor)
+EscolheLayout(0, 0, 0, 0, 0, 800, 200, 0, direction, 0);
+EscolheLayout(0, 0, 200, 0, 0, 800, 400, 0, direction, 0);
+EscolheLayout(0, 0, 600, 0, 0, 800, 200, 0, direction, 0);
 
 // coisas para fazer:
 // 1. adicionar elementos no final dos cortes
