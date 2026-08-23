@@ -235,6 +235,9 @@ function AddRet(layer, x, y, w, h, W, H, posicaoPai, tipoRet, verificar, layerCo
   } else {
     tipoRet = Math.floor(Math.random() * 2);
   }
+  if(verificar === 0){
+    tipoRet = (Math.floor(Math.random() * 3) + 3) % 4;
+  }
 
   direction = null;
   const ratio = W / H;
@@ -243,7 +246,6 @@ function AddRet(layer, x, y, w, h, W, H, posicaoPai, tipoRet, verificar, layerCo
 
   // seleciona a cor do pai para gerar a cor do filho
   corPai = coresPai[layerCor][coresPai[layerCor].length - 1];
-  console.log(`corPai: ${corPai.r}, ${corPai.g}, ${corPai.b}`);
   // define a cor do filho aleatoriamente com base na cor do pai
   let color = {
     r: Math.abs(Math.floor(Math.random() * 100) + corPai.r + 77.5) % 255,
@@ -513,64 +515,70 @@ function AddRet(layer, x, y, w, h, W, H, posicaoPai, tipoRet, verificar, layerCo
         }
       }
       break;
-    // dois quadrados em lados opostos
-    case 3:
-      minSide = Math.max(1, Math.floor(Math.min(W, H) * 0.4));
-      maxSide = Math.max(minSide, Math.floor(Math.min(W, H) * 0.47));
-
-      for (let i = 0; i < 2; i++) {
-        w = randomInt(minSide, maxSide);
-        h = w;
-
-        const isLeftSquare = i === 0;
-        const alignTop = Math.random() < 0.5;
-
-        x = isLeftSquare ? parentX : parentX + W - (w + 5);
-
-        y = alignTop ? parentY : parentY + H - (h + 5);
-
-        objetosArray[layer].push({
+      // circulo
+      case 3:
+      radius = randomInt(Math.min(W, H) * 0.8, Math.min(W, H) * 0.9);
+      x = randomInt(5, W - radius - 5) + parentX;
+      y = randomInt(5, H - radius - 5) + parentY;
+        objetosArrayE.push({
           x: x,
           y: y,
-          w: w,
-          h: h,
+          radius: radius,
           count: 0,
           tipo: 0,
+          circle: true,
+          ultimo: "ultimo",
           color
         });
-      }
-
-      if (verificar === 1) {
-        VerificaDiv(layer, direction, layer);
-      }
-      break;
   }
 }
 
 
 
+
 function geraCor() {
   for (let i = 0; i < objetosArrayE.length; i++) {
-    if (objetosArrayE[i].color) {
+    if (objetosArrayE[i].color && !objetosArrayE[i].circle) {
+        criarElem(
+          objetosArrayE[i].x,
+          objetosArrayE[i].y,
+          null,
+          objetosArrayE[i].w,
+          objetosArrayE[i].h,
+          null,
+          `rgb(${objetosArrayE[i].color.r}, ${objetosArrayE[i].color.g}, ${objetosArrayE[i].color.b})`
+        );
+    } else if (objetosArrayE[i].color) {
       criarElem(
         objetosArrayE[i].x,
         objetosArrayE[i].y,
-        objetosArrayE[i].w,
-        objetosArrayE[i].h,
+        objetosArrayE[i].radius,
+        null,
+        null,
+        true,
         `rgb(${objetosArrayE[i].color.r}, ${objetosArrayE[i].color.g}, ${objetosArrayE[i].color.b})`
       );
     }
   }
 }
 
-function criarElem(x, y, w, h, cor) {
-  x = Math.floor(x * razãoX);
-  w = Math.floor(w * razãoX);
-  y = Math.floor(y * razãoX);
-  h = Math.floor(h * razãoX);
-  ctx.beginPath();
-  ctx.fillStyle = cor;
-  ctx.fillRect(x, y, w, h);
+function criarElem(x, y, radius, w, h, circle, cor) {
+  if (!circle) {
+      
+      x = Math.floor(x * razãoX);
+      w = Math.floor(w * razãoX);
+      y = Math.floor(y * razãoX);
+      h = Math.floor(h * razãoX);
+      ctx.beginPath();
+      ctx.fillStyle = cor;
+      ctx.fillRect(x, y, w, h);
+      
+  }else{
+    ctx.beginPath();
+    ctx.fillStyle = cor;
+    ctx.arc(x + radius / 2, y + radius / 2, radius / 2, 0, Math.PI * 2);
+    ctx.fill();
+  }
 }
 
 function randomInt(min, max) {
@@ -580,18 +588,36 @@ function randomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-direction = Math.floor(Math.random() * 2);
 coresPai.push([{
   r: 134,
   g: 134,
   b: 134,
 }]);
-criarElem(0, 0, 800, 800, "rgb(134, 134, 134)");
-criarElem(0, 900, 150, 100, "rgb(255, 255, 255)");
-//(layer, x, y, w, h, W, H, count, direction, layerCor)
-EscolheLayout(0, 0, 0, 0, 0, 800, 200, 0, direction, 0);
-EscolheLayout(0, 0, 200, 0, 0, 800, 400, 0, direction, 0);
-EscolheLayout(0, 0, 600, 0, 0, 800, 200, 0, direction, 0);
+criarElem(0, 0, null, 800, 800, false, "rgb(134, 134, 134)");
+criarElem(0, 900, null, 150, 100, false, "rgb(255, 255, 255)");
+
+let qualLayoutPrimario = Math.floor(Math.random() * 3);
+direction = Math.floor(Math.random() * 2);
+
+if (qualLayoutPrimario === 0) {
+
+  //(layer, x, y, w, h, W, H, count, direction, layerCor)
+  EscolheLayout(0, 0, 0, 0, 0, 800, 200, 0, 0, 0);
+  EscolheLayout(0, 0, 200, 0, 0, 800, 400, 0, direction, 0);
+  EscolheLayout(0, 0, 600, 0, 0, 800, 200, 0, 0, 0);
+
+}else if (qualLayoutPrimario === 1) {
+
+  EscolheLayout(0, 0, 0, 0, 0, 200, 800, 0, 1, 0);
+  EscolheLayout(0, 200, 0, 0, 0, 400, 800, 0, direction, 0);
+  EscolheLayout(0, 600, 0, 0, 0, 200, 800, 0, 1, 0);
+
+} else if (qualLayoutPrimario === 2) {
+  
+  EscolheLayout(0, 0, 0, 0, 0, 300, 600, 0, direction, 0);
+  EscolheLayout(0, 300, 0, 0, 0, 500, 600, 0, direction, 0);
+  EscolheLayout(0, 0, 600, 0, 0, 800, 200, 0, direction, 0);
+}
 
 // coisas para fazer:
 // 1. adicionar elementos no final dos cortes
