@@ -181,7 +181,6 @@ function VerificaDiv(layer, direction, layerCor) {
           0,
           objetosArrayE[ultimoObjetoExecutado].w,
           objetosArrayE[ultimoObjetoExecutado].h,
-          ultimoObjetoExecutado,
           Math.floor(Math.random() * 3),
           1,
           layerCor
@@ -197,9 +196,9 @@ function VerificaDiv(layer, direction, layerCor) {
         objetosArray[layer].unshift(0);
       
       }
+      let ultimoObjetoExecutado = objetosArrayE.length - 1;
       
       if (confirmW || confirmH) {
-        let ultimoObjetoExecutado = objetosArrayE.length - 1;
         AddRet(
           layer + 1,
           objetosArrayE[ultimoObjetoExecutado].x,
@@ -208,7 +207,6 @@ function VerificaDiv(layer, direction, layerCor) {
           0,
           objetosArrayE[ultimoObjetoExecutado].w,
           objetosArrayE[ultimoObjetoExecutado].h,
-          ultimoObjetoExecutado,
           Math.floor(Math.random() * 3),
           0,
           layerCor
@@ -220,14 +218,14 @@ function VerificaDiv(layer, direction, layerCor) {
     }
   }
 
-  if (ultimaVolta > 0) {
+  if (layer === 0 && ultimaVolta > 0) {
     geraCor();
     console.log(objetosArrayE);
     console.log(objetosArray);
   }
 }
 
-function AddRet(layer, x, y, w, h, W, H, posicaoPai, tipoRet, verificar, layerCor) {
+function AddRet(layer, x, y, w, h, W, H, tipoRet, verificar, layerCor) {
   if (!objetosArray[layer]) {
     objetosArray[layer] = [];
   }
@@ -239,7 +237,7 @@ function AddRet(layer, x, y, w, h, W, H, posicaoPai, tipoRet, verificar, layerCo
     tipoRet = (Math.floor(Math.random() * 3) + 3) % 4;
   }
 
-  direction = null;
+  direction = null; 
   const ratio = W / H;
   const parentX = x;
   const parentY = y;
@@ -518,8 +516,19 @@ function AddRet(layer, x, y, w, h, W, H, posicaoPai, tipoRet, verificar, layerCo
       // circulo
       case 3:
       radius = randomInt(Math.min(W, H) * 0.8, Math.min(W, H) * 0.9);
-      x = randomInt(5, W - radius - 5) + parentX;
-      y = randomInt(5, H - radius - 5) + parentY;
+      greatSide = Math.max(W, H)
+      minGap = 30
+      quantCircles = Math.floor((greatSide - minGap) / (radius + minGap));
+      
+      finalGap = (greatSide - quantCircles * radius) / (quantCircles + 1);
+      for (let i = 0; i < quantCircles; i++) {
+        if (W >= H) {
+          x = parentX + finalGap + i * (radius + finalGap);
+          y = parentY + H / 2 - (radius / 2);
+        } else {
+          x = parentX + W / 2 - (radius / 2);
+          y = parentY + finalGap + i * (radius + finalGap);
+        }
         objetosArrayE.push({
           x: x,
           y: y,
@@ -530,6 +539,7 @@ function AddRet(layer, x, y, w, h, W, H, posicaoPai, tipoRet, verificar, layerCo
           ultimo: "ultimo",
           color
         });
+      }
   }
 }
 
@@ -589,12 +599,11 @@ function randomInt(min, max) {
 }
 
 coresPai.push([{
-  r: 134,
-  g: 134,
-  b: 134,
+  r: Math.floor(Math.random() * 256),
+  g: Math.floor(Math.random() * 256),
+  b: Math.floor(Math.random() * 256),
 }]);
-criarElem(0, 0, null, 800, 800, false, "rgb(134, 134, 134)");
-criarElem(0, 900, null, 150, 100, false, "rgb(255, 255, 255)");
+criarElem(0, 0, null, 800, 800, false, `rgb(${coresPai[0][0].r}, ${coresPai[0][0].g}, ${coresPai[0][0].b})`);
 
 let qualLayoutPrimario = Math.floor(Math.random() * 3);
 direction = Math.floor(Math.random() * 2);
