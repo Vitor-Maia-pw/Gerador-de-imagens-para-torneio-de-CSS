@@ -246,15 +246,15 @@ function AddRet(layer, x, y, w, h, W, H, tipoRet, verificar, layerCor) {
   corPai = coresPai[layerCor][coresPai[layerCor].length - 1];
   // define a cor do filho aleatoriamente com base na cor do pai
   let color = {
-    r: Math.abs(Math.floor(Math.random() * 100) + corPai.r + 77.5) % 255,
-    g: Math.abs(Math.floor(Math.random() * 100) + corPai.g + 77.5) % 255,
-    b: Math.abs(Math.floor(Math.random() * 100) + corPai.b + 77.5) % 255,
+    r: Math.abs(Math.floor(Math.random() * 75) + corPai.r + 90) % 255,
+    g: Math.abs(Math.floor(Math.random() * 75) + corPai.g + 90) % 255,
+    b: Math.abs(Math.floor(Math.random() * 75) + corPai.b + 90) % 255,
   };
   if (color.r - color.g < 40 && color.r - color.b < 40 && color.g - color.b < 40) {
     aleatorio = Math.random() * 3;
     aleatorio < 1 ? color.r = (color.r + 100) % 255 : aleatorio < 2 ? color.g = (color.g + 100) % 255 : color.b = (color.b + 100) % 255;
   }
-  console.log(color)
+  console.log(color)    
   switch (tipoRet) {
     // retangulo comum
     case 0:
