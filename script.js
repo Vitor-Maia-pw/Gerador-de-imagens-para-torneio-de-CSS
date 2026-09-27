@@ -1,11 +1,12 @@
 const canvas = document.getElementById("canva");
 const ctx = canvas.getContext("2d");
+const LARGURA_BASE = 1000;
+const ALTURA_BASE = 960;
 let objetosArray = [];
 let objetosArrayE = [];
 let objetosArrayFinal = [];
-let razãoX = 1;
-let razãoY = 1;
 let coresPai = [];
+let corFundo = null;
 let direction = 0;
 let quant = 0;
 let nDiv = 0;
@@ -17,32 +18,43 @@ let porcentagem = 0;
 let a = 0;
 let aleatorio = 0;
 function resizeCanvas() {
-  const scale = window.devicePixelRatio;
+  const larguraVisual = canvas.clientWidth;
+  const alturaVisual = canvas.clientHeight;
+  const densidade = window.devicePixelRatio || 1;
 
-  const width = canvas.clientWidth;
-  const height = canvas.clientHeight;
+  // O bitmap interno acompanha a densidade da tela, mas os objetos continuam
+  // usando o sistema de coordenadas fixo da imagem gerada (1000 x 960).
+  canvas.width = Math.round(larguraVisual * densidade);
+  canvas.height = Math.round(alturaVisual * densidade);
+  ctx.setTransform(
+    canvas.width / LARGURA_BASE,
+    0,
+    0,
+    canvas.height / ALTURA_BASE,
+    0,
+    0,
+  );
 
-  canvas.width = width * scale;
-  canvas.height = height * scale;
+  if (corFundo) {
+    criarElem(0, 0, null, 800, 800, false, corFundo);
+  }
 
-  canvas.style.width = "1000px";
-  canvas.style.height = "960px";
-
-  ctx.setTransform(scale, 0, 0, scale, 0, 0);
-  for (let i = 0; i < objetosArrayFinal.length; i++) {
+  for (const objeto of objetosArrayFinal) {
+    const cor = `rgb(${objeto.color.r}, ${objeto.color.g}, ${objeto.color.b})`;
     criarElem(
-      objetosArray[i].x,
-      objetosArray[i].y,
-      objetosArray[i].w,
-      objetosArray[i].h,
-      objetosArray[i].cor,
+      objeto.x,
+      objeto.y,
+      objeto.radius ?? null,
+      objeto.w ?? null,
+      objeto.h ?? null,
+      Boolean(objeto.circle),
+      cor,
     );
   }
-  razãoX = canvas.width / 1000;
-  razãoY = canvas.height / 960;
 }
 
-window.addEventListener("resize", resizeCanvas());
+window.addEventListener("resize", resizeCanvas);
+window.visualViewport?.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 /* A layer serve para organizar os elementos em camadas diferentes, assim os elementos da layer 1 foram criador a partir dos 
 elementos da layer 0 */
@@ -231,7 +243,7 @@ function VerificaDiv(layer, direction, layerCor) {
 
   if (layer === 0 && ultimaVolta > 0) {
     for (let i = 0; i < objetosArrayE.length; i++) {
-      if (objetosArrayE[i].cortado) {
+      if (objetosArrayE[i].cortado && objetosArrayE[i + 1]) {
         confirmFilho =
           objetosArrayE[i].x <= objetosArrayE[i + 1].x &&
           objetosArrayE[i].x + objetosArrayE[i].w >=
@@ -627,10 +639,6 @@ function geraCor() {
 
 function criarElem(x, y, radius, w, h, circle, cor) {
   if (!circle) {
-    x = Math.floor(x * razãoX);
-    w = Math.floor(w * razãoX);
-    y = Math.floor(y * razãoX);
-    h = Math.floor(h * razãoX);
     ctx.beginPath();
     ctx.fillStyle = cor;
     ctx.fillRect(x, y, w, h);
@@ -656,6 +664,7 @@ coresPai.push([
     b: Math.floor(Math.random() * 256),
   },
 ]);
+corFundo = `rgb(${coresPai[0][0].r}, ${coresPai[0][0].g}, ${coresPai[0][0].b})`;
 criarElem(
   0,
   0,
@@ -663,7 +672,7 @@ criarElem(
   800,
   800,
   false,
-  `rgb(${coresPai[0][0].r}, ${coresPai[0][0].g}, ${coresPai[0][0].b})`,
+  corFundo,
 );
 
 let qualLayoutPrimario = Math.floor(Math.random() * 3);
