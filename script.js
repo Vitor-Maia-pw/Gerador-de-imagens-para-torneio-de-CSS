@@ -8,6 +8,7 @@ let objetosArrayFinal = [];
 let coresPai = [];
 let corFundo = null;
 let direction = 0;
+let margemMin = 15;
 let quant = 0;
 let nDiv = 0;
 let w = 0;
@@ -39,12 +40,12 @@ function resizeCanvas() {
     criarElem(0, 0, null, 800, 800, false, corFundo);
   }
 
-  for (const objeto of objetosArrayFinal) {
+  for (const objeto of objetosArrayFinal  ) {
     const cor = `rgb(${objeto.color.r}, ${objeto.color.g}, ${objeto.color.b})`;
     criarElem(
       objeto.x,
       objeto.y,
-      objeto.radius ?? null,
+      objeto.diameter ?? null,
       objeto.w ?? null,
       objeto.h ?? null,
       Boolean(objeto.circle),
@@ -140,13 +141,13 @@ function VerificaDiv(layer, direction, layerCor) {
   for (let i = 0; i < objetosArray[layer].length; i++) {
     let dividir = 0;
     if (direction === 0) {
-      if (objetosArray[layer][i].h > 100 * 2) {
+      if (objetosArray[layer][i].h > 100 * 2 && objetosArray[layer][i].w > 100) {
         porcentagem = objetosArray[layer][i].h / 100;
         dividir =
           Math.floor(Math.random() * porcentagem) + (porcentagem < 3 ? 0 : 2);
       }
     } else if (direction === 1) {
-      if (objetosArray[layer][i].w > 100 * 2) {
+      if (objetosArray[layer][i].w > 100 * 2 && objetosArray[layer][i].h > 100) {
         porcentagem = objetosArray[layer][i].w / 100;
         dividir =
           Math.floor(Math.random() * porcentagem) + (porcentagem < 3 ? 0 : 2);
@@ -197,12 +198,12 @@ function VerificaDiv(layer, direction, layerCor) {
       } else {
         AddRet(
           layer + 1,
-          objetosArrayE[ultimoObjetoExecutado].x,
-          objetosArrayE[ultimoObjetoExecutado].y,
+          ( objetosArrayE[ultimoObjetoExecutado].x + margemMin ),
+          ( objetosArrayE[ultimoObjetoExecutado].y + margemMin ),
           0,
           0,
-          objetosArrayE[ultimoObjetoExecutado].w,
-          objetosArrayE[ultimoObjetoExecutado].h,
+          ( objetosArrayE[ultimoObjetoExecutado].w - margemMin * 2 ),
+          ( objetosArrayE[ultimoObjetoExecutado].h - margemMin * 2 ),
           Math.floor(Math.random() * 3),
           1,
           layerCor,
@@ -210,9 +211,9 @@ function VerificaDiv(layer, direction, layerCor) {
       }
     } else {
       let confirmW =
-        objetosArray[layer][i].w > 100 && objetosArray[layer][i].h > 50;
+        objetosArray[layer][i].w > 100 && objetosArray[layer][i].h > 80 ;
       let confirmH =
-        objetosArray[layer][i].h > 100 && objetosArray[layer][i].w > 50;
+        objetosArray[layer][i].h > 100 && objetosArray[layer][i].w > 80;
       if (objetosArray[layer][i]) {
         objetosArrayE.push(objetosArray[layer][i]);
         objetosArray[layer].splice(i, 1);
@@ -224,12 +225,12 @@ function VerificaDiv(layer, direction, layerCor) {
       if (confirmW || confirmH) {
         AddRet(
           layer + 1,
-          objetosArrayE[ultimoObjetoExecutado].x,
-          objetosArrayE[ultimoObjetoExecutado].y,
+          ( objetosArrayE[ultimoObjetoExecutado].x + margemMin ),
+          ( objetosArrayE[ultimoObjetoExecutado].y + margemMin ),
           0,
           0,
-          objetosArrayE[ultimoObjetoExecutado].w,
-          objetosArrayE[ultimoObjetoExecutado].h,
+          ( objetosArrayE[ultimoObjetoExecutado].w - margemMin * 2 ),
+          ( objetosArrayE[ultimoObjetoExecutado].h - margemMin * 2 ),
           Math.floor(Math.random() * 3),
           0,
           layerCor,
@@ -249,30 +250,31 @@ function VerificaDiv(layer, direction, layerCor) {
           objetosArrayE[i].x + objetosArrayE[i].w >=
             objetosArrayE[i + 1].x + objetosArrayE[i + 1].w &&
           objetosArrayE[i].y <= objetosArrayE[i + 1].y &&
-          objetosArrayE[i].y + objetosArrayE[i].h >=
+          objetosArrayE[i].y + objetosArrayE[i] .h >=
             objetosArrayE[i + 1].y + objetosArrayE[i + 1].h;
 
-        if (objetosArrayE[i + 1].radius) {
+        if (objetosArrayE[i + 1].diameter) {
           confirmFilho =
             objetosArrayE[i].x <= objetosArrayE[i + 1].x &&
             objetosArrayE[i].x + objetosArrayE[i].w >=
-              objetosArrayE[i + 1].x + objetosArrayE[i + 1].radius &&
+              objetosArrayE[i + 1].x + objetosArrayE[i + 1].diameter &&
             objetosArrayE[i].y <= objetosArrayE[i + 1].y &&
             objetosArrayE[i].y + objetosArrayE[i].h >=
-              objetosArrayE[i + 1].y + objetosArrayE[i + 1].radius;
+              objetosArrayE[i + 1].y + objetosArrayE[i + 1].diameter;
         }
+        console.log("aaaaaaaaa")
         console.log(confirmFilho);
         console.log(objetosArrayE[i]);
         console.log(objetosArrayE[i + 1]);
         if (confirmFilho === false) {
           AddRet(
             layer + 1,
-            objetosArrayE[i].x,
-            objetosArrayE[i].y,
+            ( objetosArrayE[i].x + margemMin ),
+            ( objetosArrayE[i].y + margemMin ),
             0,
             0,
-            objetosArrayE[i].w,
-            objetosArrayE[i].h,
+            ( objetosArrayE[i].w - margemMin * 2 ),
+            ( objetosArrayE[i].h - margemMin * 2 ),
             Math.floor(Math.random() * 3),
             0,
             layerCor,
@@ -280,9 +282,9 @@ function VerificaDiv(layer, direction, layerCor) {
         }
       }
     }
-    geraCor();
     console.log(objetosArrayE);
     console.log(objetosArray);
+    geraCor();
   }
 }
 
@@ -306,9 +308,9 @@ function AddRet(layer, x, y, w, h, W, H, tipoRet, verificar, layerCor) {
   corPai = coresPai[layerCor][coresPai[layerCor].length - 1];
   // define a cor do filho aleatoriamente com base na cor do pai
   let color = {
-    r: Math.abs(Math.floor(Math.random() * 75) + corPai.r + 90) % 255,
-    g: Math.abs(Math.floor(Math.random() * 75) + corPai.g + 90) % 255,
-    b: Math.abs(Math.floor(Math.random() * 75) + corPai.b + 90) % 255,
+    r: Math.abs(Math.floor(Math.random() * 55) + corPai.r + 100) % 255,
+    g: Math.abs(Math.floor(Math.random() * 55) + corPai.g + 100) % 255,
+    b: Math.abs(Math.floor(Math.random() * 55) + corPai.b + 100) % 255,
   };
   if (
     color.r - color.g < 40 &&
@@ -325,10 +327,10 @@ function AddRet(layer, x, y, w, h, W, H, tipoRet, verificar, layerCor) {
   switch (tipoRet) {
     // retangulo comum
     case 0:
-      w = randomInt(W * 0.8, W * 0.9);
-      h = randomInt(H * 0.8, H * 0.9);
-      x = randomInt(5, W - w - 5) + parentX;
-      y = randomInt(5, H - h - 5) + parentY;
+      w = randomInt(W * 0.8, W * 1);
+      h = randomInt(H * 0.8, H * 1);
+      x = randomInt(0, W - w) + parentX;
+      y = randomInt(0, H - h) + parentY;
       if (verificar === 1) {
         objetosArray[layer].push({
           x: x,
@@ -356,8 +358,8 @@ function AddRet(layer, x, y, w, h, W, H, tipoRet, verificar, layerCor) {
       break;
     // quadrado centralizado
     case 1:
-      w = randomInt(W * 0.7, W * 0.8);
-      h = randomInt(H * 0.7, H * 0.8);
+      w = randomInt(W * 0.7, W * 1);
+      h = randomInt(H * 0.7, H * 1);
 
       const horizontalCenterMode = Math.random() < 0.5;
 
@@ -366,9 +368,9 @@ function AddRet(layer, x, y, w, h, W, H, tipoRet, verificar, layerCor) {
         x = parentX + Math.floor((W - w) / 2);
 
         const verticalPositions = [
-          parentY + 5,
+          parentY,
           parentY + Math.floor((H - h) / 2),
-          parentY + H - h - 5,
+          parentY + H - h,
         ];
 
         y = verticalPositions[randomInt(0, 2)];
@@ -377,9 +379,9 @@ function AddRet(layer, x, y, w, h, W, H, tipoRet, verificar, layerCor) {
         y = parentY + Math.floor((H - h) / 2);
 
         const horizontalPositions = [
-          parentX + 5,
+          parentX,
           parentX + Math.floor((W - w) / 2),
-          parentX + W - w - 5,
+          parentX + W - w,
         ];
 
         x = horizontalPositions[randomInt(0, 2)];
@@ -434,9 +436,9 @@ function AddRet(layer, x, y, w, h, W, H, tipoRet, verificar, layerCor) {
       // the parent's width (W) and height (H), never from an average.
       const preferredGap = 10;
       const minChildWidth = W * 0.5;
-      const maxChildWidth = W * 0.9;
+      const maxChildWidth = W * 1;
       const minChildHeight = H * 0.5;
-      const maxChildHeight = H * 0.9;
+      const maxChildHeight = H * 1;
 
       // Calculates the free size for one child in a given grid. The gap is
       // reduced for small parents so the grid always remains inside it.
@@ -580,24 +582,23 @@ function AddRet(layer, x, y, w, h, W, H, tipoRet, verificar, layerCor) {
       break;
     // circulo
     case 3:
-      radius = randomInt(Math.min(W, H) * 0.8, Math.min(W, H) * 0.9);
-      greatSide = Math.max(W, H);
+      diameter = Math.max(randomInt(Math.min(W, H) * 0.9, Math.min(W, H) * 1), 20);
+      greatSide = Math.max(W, H) + margemMin * 2;
       minGap = 30;
-      quantCircles = Math.floor((greatSide - minGap) / (radius + minGap));
-
-      finalGap = (greatSide - quantCircles * radius) / (quantCircles + 1);
+      quantCircles = Math.floor((greatSide - minGap) / (diameter + minGap));
+      finalGap = (greatSide - quantCircles * diameter) / (quantCircles + 1);
       for (let i = 0; i < quantCircles; i++) {
         if (W >= H) {
-          x = parentX + finalGap + i * (radius + finalGap);
-          y = parentY + H / 2 - radius / 2;
+          x = (parentX - margemMin) + finalGap + i * (diameter + finalGap);
+          y = (parentY ) + H / 2 - diameter / 2 ;
         } else {
-          x = parentX + W / 2 - radius / 2;
-          y = parentY + finalGap + i * (radius + finalGap);
+          x = (parentX) + W / 2 - diameter / 2;
+          y = (parentY - margemMin) + finalGap + i * (diameter + finalGap) ;
         }
         objetosArrayE.push({
           x: x,
           y: y,
-          radius: radius,
+          diameter: diameter,
           count: 0,
           tipo: 0,
           circle: true,
@@ -611,33 +612,37 @@ function AddRet(layer, x, y, w, h, W, H, tipoRet, verificar, layerCor) {
 function geraCor() {
   for (let i = 0; i < objetosArrayE.length; i++) {
     console.log(objetosArrayE[i]);
-    if (!objetosArrayE[i].circle) {
-      criarElem(
-        objetosArrayE[i].x,
-        objetosArrayE[i].y,
-        null,
-        objetosArrayE[i].w,
-        objetosArrayE[i].h,
-        null,
-        `rgb(${objetosArrayE[i].color.r}, ${objetosArrayE[i].color.g}, ${objetosArrayE[i].color.b})`,
-      );
-    } else if (objetosArrayE[i].color) {
-      criarElem(
-        objetosArrayE[i].x,
-        objetosArrayE[i].y,
-        objetosArrayE[i].radius,
-        null,
-        null,
-        true,
-        `rgb(${objetosArrayE[i].color.r}, ${objetosArrayE[i].color.g}, ${objetosArrayE[i].color.b})`,
-      );
+      
+      if (!objetosArrayE[i].circle) {
+        criarElem(
+          objetosArrayE[i].x,
+          objetosArrayE[i].y,
+          null,
+          objetosArrayE[i].w,
+          objetosArrayE[i].h,
+          null,
+          `rgb(${objetosArrayE[i].color.r}, ${objetosArrayE[i].color.g}, ${objetosArrayE[i].color.b})`,
+        );
+      } else if (objetosArrayE[i].color) {
+        criarElem(
+          objetosArrayE[i].x,
+          objetosArrayE[i].y,
+          objetosArrayE[i].diameter,
+          null,
+          null,
+          true,
+          `rgb(${objetosArrayE[i].color.r}, ${objetosArrayE[i].color.g}, ${objetosArrayE[i].color.b})`,
+        );
+      }
     }
-  }
-  objetosArrayFinal.push(...objetosArrayE);
-  objetosArrayE = [];
+    
+    // objetos array final serve para que a correção de objetos vazios não aconteça duas vezes no mesmo objeto
+    objetosArrayFinal.push(...objetosArrayE)
+    objetosArrayE = []
+  
 }
 
-function criarElem(x, y, radius, w, h, circle, cor) {
+function criarElem(x, y, diameter, w, h, circle, cor) {
   if (!circle) {
     ctx.beginPath();
     ctx.fillStyle = cor;
@@ -645,7 +650,7 @@ function criarElem(x, y, radius, w, h, circle, cor) {
   } else {
     ctx.beginPath();
     ctx.fillStyle = cor;
-    ctx.arc(x + radius / 2, y + radius / 2, radius / 2, 0, Math.PI * 2);
+    ctx.arc(x + diameter / 2, y + diameter / 2, diameter / 2, 0, Math.PI * 2);
     ctx.fill();
   }
 }
