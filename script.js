@@ -9,6 +9,7 @@ let coresPai = [];
 let corFundo = null;
 let direction = 0;
 let margemMin = 15;
+let tamanhoMin = 70;
 let quant = 0;
 let nDiv = 0;
 let w = 0;
@@ -40,17 +41,19 @@ function resizeCanvas() {
     criarElem(0, 0, null, 800, 800, false, corFundo);
   }
 
-  for (const objeto of objetosArrayFinal  ) {
-    const cor = `rgb(${objeto.color.r}, ${objeto.color.g}, ${objeto.color.b})`;
-    criarElem(
-      objeto.x,
-      objeto.y,
-      objeto.diameter ?? null,
-      objeto.w ?? null,
-      objeto.h ?? null,
-      Boolean(objeto.circle),
-      cor,
-    );
+  for (const objeto of objetosArrayFinal) {
+    if (objeto.color) {
+      const cor = `rgb(${objeto.color.r}, ${objeto.color.g}, ${objeto.color.b})`;
+      criarElem(
+        objeto.x,
+        objeto.y,
+        objeto.diameter ?? null,
+        objeto.w ?? null,
+        objeto.h ?? null,
+        Boolean(objeto.circle),
+        cor,
+      );
+    }
   }
 }
 
@@ -65,7 +68,7 @@ function EscolheLayout(layer, x, y, w, h, W, H, count, direction, layerCor) {
   }
   // direction = row
   if (direction === 0) {
-    nDiv = Math.floor(W / 100);
+    nDiv = Math.floor(W / tamanhoMin);
     if (nDiv > 3) {
       nDiv = 3;
     }
@@ -79,28 +82,25 @@ function EscolheLayout(layer, x, y, w, h, W, H, count, direction, layerCor) {
         w = W;
       } else {
         // tem a chance de gerar
-        w = Math.floor(Math.random() * (W - 100 * (quant - i + 1))) + 100;
+        w =
+          Math.floor(Math.random() * (W - tamanhoMin * (quant - i + 1))) +
+          tamanhoMin;
         W -= w;
         nDiv--;
       }
       objetosArray[layer].push({
         x: x,
         y: y,
-        w: w, 
+        w: w,
         h: H,
         count: count + 1,
-        color: {
-          r: Math.floor(Math.random() * 256),
-          g: Math.floor(Math.random() * 256),
-          b: Math.floor(Math.random() * 256),
-        },
         cortado: true,
       });
     }
   }
   //direction = column
   else {
-    nDiv = Math.floor(H / 100);
+    nDiv = Math.floor(H / tamanhoMin);
     if (nDiv > 3) {
       nDiv = 3;
     }
@@ -109,11 +109,13 @@ function EscolheLayout(layer, x, y, w, h, W, H, count, direction, layerCor) {
 
     for (let i = 0; i <= quant; i++) {
       y = y + h;
-      // w min 100
+
       if (quant === i) {
         h = H;
       } else {
-        h = Math.floor(Math.random() * (H - 100 * (quant - i + 1))) + 100;
+        h =
+          Math.floor(Math.random() * (H - tamanhoMin * (quant - i + 1))) +
+          tamanhoMin;
         H -= h;
       }
 
@@ -123,11 +125,6 @@ function EscolheLayout(layer, x, y, w, h, W, H, count, direction, layerCor) {
         w: W,
         h: h,
         count: count + 1,
-        color: {
-          r: Math.floor(Math.random() * 256),
-          g: Math.floor(Math.random() * 256),
-          b: Math.floor(Math.random() * 256),
-        },
         cortado: true,
       });
     }
@@ -141,14 +138,20 @@ function VerificaDiv(layer, direction, layerCor) {
   for (let i = 0; i < objetosArray[layer].length; i++) {
     let dividir = 0;
     if (direction === 0) {
-      if (objetosArray[layer][i].h > 100 * 2 && objetosArray[layer][i].w > 100) {
-        porcentagem = objetosArray[layer][i].h / 100;
+      if (
+        objetosArray[layer][i].h > tamanhoMin * 2 &&
+        objetosArray[layer][i].w > tamanhoMin
+      ) {
+        porcentagem = objetosArray[layer][i].h / tamanhoMin;
         dividir =
           Math.floor(Math.random() * porcentagem) + (porcentagem < 3 ? 0 : 2);
       }
     } else if (direction === 1) {
-      if (objetosArray[layer][i].w > 100 * 2 && objetosArray[layer][i].h > 100) {
-        porcentagem = objetosArray[layer][i].w / 100;
+      if (
+        objetosArray[layer][i].w > tamanhoMin * 2 &&
+        objetosArray[layer][i].h > tamanhoMin
+      ) {
+        porcentagem = objetosArray[layer][i].w / tamanhoMin;
         dividir =
           Math.floor(Math.random() * porcentagem) + (porcentagem < 3 ? 0 : 2);
       }
@@ -161,8 +164,8 @@ function VerificaDiv(layer, direction, layerCor) {
         objetosArray[layer][i].w,
         objetosArray[layer][i].h,
       );
-      if (maiorLado > 100 * 2 && menorLado > 100) {
-        porcentagem = maiorLado / 100;
+      if (maiorLado > tamanhoMin * 2 && menorLado > tamanhoMin) {
+        porcentagem = maiorLado / tamanhoMin;
         dividir =
           Math.floor(Math.random() * porcentagem) + (porcentagem < 3 ? 0 : 2);
       }
@@ -177,7 +180,7 @@ function VerificaDiv(layer, direction, layerCor) {
     }
     if (dividir > 0) {
       let cortar;
-      if (objetosArray[layer][i].count < 3) {
+      if (objetosArray[layer][i].count < 2) {
         porcentagem = (objetosArray[layer][i].count * 2.5) / 10 + 1 / 10;
         cortar = Math.random() > porcentagem;
       } else {
@@ -203,22 +206,23 @@ function VerificaDiv(layer, direction, layerCor) {
       } else {
         AddRet(
           layer + 1,
-          ( objetosArrayE[ultimoObjetoExecutado].x + margemMin ),
-          ( objetosArrayE[ultimoObjetoExecutado].y + margemMin ),
+          objetosArrayE[ultimoObjetoExecutado].x + margemMin,
+          objetosArrayE[ultimoObjetoExecutado].y + margemMin,
           0,
           0,
-          ( objetosArrayE[ultimoObjetoExecutado].w - margemMin * 2 ),
-          ( objetosArrayE[ultimoObjetoExecutado].h - margemMin * 2 ),
+          objetosArrayE[ultimoObjetoExecutado].w - margemMin * 2,
+          objetosArrayE[ultimoObjetoExecutado].h - margemMin * 2,
           Math.floor(Math.random() * 3),
           1,
           layerCor,
         );
       }
     } else {
+      // excessão para o tamanho minimo
       let confirmW =
-       ( objetosArray[layer][i].w > 100 && objetosArray[layer][i].h > 80 );
+        objetosArray[layer][i].w > 100 && objetosArray[layer][i].h > 80;
       let confirmH =
-       ( objetosArray[layer][i].h > 100 && objetosArray[layer][i].w > 80 );
+        objetosArray[layer][i].h > 100 && objetosArray[layer][i].w > 80;
       if (objetosArray[layer][i]) {
         objetosArrayE.push(objetosArray[layer][i]);
         objetosArray[layer].splice(i, 1);
@@ -230,12 +234,12 @@ function VerificaDiv(layer, direction, layerCor) {
       if (confirmW || confirmH) {
         AddRet(
           layer + 1,
-          ( objetosArrayE[ultimoObjetoExecutado].x + margemMin ),
-          ( objetosArrayE[ultimoObjetoExecutado].y + margemMin ),
+          objetosArrayE[ultimoObjetoExecutado].x + margemMin,
+          objetosArrayE[ultimoObjetoExecutado].y + margemMin,
           0,
           0,
-          ( objetosArrayE[ultimoObjetoExecutado].w - margemMin * 2 ),
-          ( objetosArrayE[ultimoObjetoExecutado].h - margemMin * 2 ),
+          objetosArrayE[ultimoObjetoExecutado].w - margemMin * 2,
+          objetosArrayE[ultimoObjetoExecutado].h - margemMin * 2,
           Math.floor(Math.random() * 3),
           0,
           layerCor,
@@ -275,12 +279,12 @@ function VerificaDiv(layer, direction, layerCor) {
         if (!confirmFilho) {
           AddRet(
             layer + 1,
-            ( pai.x + margemMin ),
-            ( pai.y + margemMin ),
+            pai.x + margemMin,
+            pai.y + margemMin,
             0,
             0,
-            ( pai.w - margemMin * 2 ),
-            ( pai.h - margemMin * 2 ),
+            pai.w - margemMin * 2,
+            pai.h - margemMin * 2,
             Math.floor(Math.random() * 3),
             0,
             layerCor,
@@ -312,16 +316,26 @@ function AddRet(layer, x, y, w, h, W, H, tipoRet, verificar, layerCor) {
   const corPai = coresPai[layerCor][coresPai[layerCor].length - 1];
   // define a cor do filho aleatoriamente com base na cor do pai
   let color = {
-    r: Math.abs(Math.floor(Math.random() * 55) + corPai.r + 100) % 255,
-    g: Math.abs(Math.floor(Math.random() * 55) + corPai.g + 100) % 255,
-    b: Math.abs(Math.floor(Math.random() * 55) + corPai.b + 100) % 255,
+    
+    r: Math.abs(Math.floor(Math.random() * 105) + corPai.r + 75) % 255,
+    g: Math.abs(Math.floor(Math.random() * 105) + corPai.g + 75) % 255,
+    b: Math.abs(Math.floor(Math.random() * 105) + corPai.b + 75) % 255,
   };
   if (
     color.r - color.g < 40 &&
     color.r - color.b < 40 &&
     color.g - color.b < 40
   ) {
-    aleatorio = Math.random() * 3;
+    if (corPai.r >= corPai.b && corPai.r >= corPai.g) {
+      aleatorio = Math.random() * 2 + 1;
+      
+    } else if (corPai.g >= corPai.r && corPai.g >= corPai.b) {
+      aleatorio = Math.random() * 2 + 2 % 3;
+      
+    } else{
+      aleatorio = Math.random() * 2;
+
+    }
     aleatorio < 1
       ? (color.r = (color.r + 100) % 255)
       : aleatorio < 2
@@ -586,22 +600,26 @@ function AddRet(layer, x, y, w, h, W, H, tipoRet, verificar, layerCor) {
       break;
     // circulo
     case 3:
-      const diameter = Math.max(randomInt(Math.min(W, H) * 0.9, Math.min(W, H) * 1), 20);
+      const diameter = Math.max(
+        randomInt(Math.min(W, H) * 0.9, Math.min(W, H) * 1),
+        20,
+      );
       const greatSide = Math.max(W, H) + margemMin * 2;
       const minGap = 30;
-      
+
       const quantCircles = Math.max(
         1,
         Math.floor((greatSide - minGap) / (diameter + minGap)),
       );
-      const finalGap = (greatSide - quantCircles * diameter) / (quantCircles + 1);
+      const finalGap =
+        (greatSide - quantCircles * diameter) / (quantCircles + 1);
       for (let i = 0; i < quantCircles; i++) {
         if (W >= H) {
-          x = (parentX - margemMin) + finalGap + i * (diameter + finalGap);
-          y = (parentY ) + H / 2 - diameter / 2 ;
+          x = parentX - margemMin + finalGap + i * (diameter + finalGap);
+          y = parentY + H / 2 - diameter / 2;
         } else {
-          x = (parentX) + W / 2 - diameter / 2;
-          y = (parentY - margemMin) + finalGap + i * (diameter + finalGap) ;
+          x = parentX + W / 2 - diameter / 2;
+          y = parentY - margemMin + finalGap + i * (diameter + finalGap);
         }
         objetosArrayE.push({
           x: x,
@@ -619,7 +637,8 @@ function AddRet(layer, x, y, w, h, W, H, tipoRet, verificar, layerCor) {
 
 function geraCor() {
   for (let i = 0; i < objetosArrayE.length; i++) {
-      if (!objetosArrayE[i].circle) {
+    if (!objetosArrayE[i].circle) {
+      if (objetosArrayE[i].color) {
         criarElem(
           objetosArrayE[i].x,
           objetosArrayE[i].y,
@@ -629,23 +648,23 @@ function geraCor() {
           null,
           `rgb(${objetosArrayE[i].color.r}, ${objetosArrayE[i].color.g}, ${objetosArrayE[i].color.b})`,
         );
-      } else if (objetosArrayE[i].color) {
-        criarElem(
-          objetosArrayE[i].x,
-          objetosArrayE[i].y,
-          objetosArrayE[i].diameter,
-          null,
-          null,
-          true,
-          `rgb(${objetosArrayE[i].color.r}, ${objetosArrayE[i].color.g}, ${objetosArrayE[i].color.b})`,
-        );
       }
+    } else if (objetosArrayE[i].color) {
+      criarElem(
+        objetosArrayE[i].x,
+        objetosArrayE[i].y,
+        objetosArrayE[i].diameter,
+        null,
+        null,
+        true,
+        `rgb(${objetosArrayE[i].color.r}, ${objetosArrayE[i].color.g}, ${objetosArrayE[i].color.b})`,
+      );
     }
-    
-    // objetos array final serve para que a correção de objetos vazios não aconteça duas vezes no mesmo objeto
-    objetosArrayFinal.push(...objetosArrayE)
-    objetosArrayE = []
-  
+  }
+
+  // objetos array final serve para que a correção de objetos vazios não aconteça duas vezes no mesmo objeto
+  objetosArrayFinal.push(...objetosArrayE);
+  objetosArrayE = [];
 }
 
 function criarElem(x, y, diameter, w, h, circle, cor) {
@@ -676,15 +695,7 @@ coresPai.push([
   },
 ]);
 corFundo = `rgb(${coresPai[0][0].r}, ${coresPai[0][0].g}, ${coresPai[0][0].b})`;
-criarElem(
-  0,
-  0,
-  null,
-  800,
-  800,
-  false,
-  corFundo,
-);
+criarElem(0, 0, null, 800, 800, false, corFundo);
 
 let qualLayoutPrimario = Math.floor(Math.random() * 3);
 direction = Math.floor(Math.random() * 2);
