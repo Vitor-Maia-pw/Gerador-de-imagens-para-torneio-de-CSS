@@ -65,11 +65,11 @@ function EscolheLayout(layer, x, y, w, h, W, H, count, direction, layerCor) {
   }
   // direction = row
   if (direction === 0) {
-    nDiv = W / 100;
+    nDiv = Math.floor(W / 100);
     if (nDiv > 3) {
       nDiv = 3;
     }
-    quant = Math.ceil(Math.random() * (nDiv - 1));
+    quant = nDiv > 1 ? Math.ceil(Math.random() * (nDiv - 1)) : 0;
     nDiv = 1;
 
     for (let i = 0; i <= quant; i++) {
@@ -100,11 +100,11 @@ function EscolheLayout(layer, x, y, w, h, W, H, count, direction, layerCor) {
   }
   //direction = column
   else {
-    nDiv = H / 100;
+    nDiv = Math.floor(H / 100);
     if (nDiv > 3) {
       nDiv = 3;
     }
-    quant = Math.floor(Math.random() * (nDiv - 1)) + 1;
+    quant = nDiv > 1 ? Math.floor(Math.random() * (nDiv - 1)) + 1 : 0;
     nDiv = 1;
 
     for (let i = 0; i <= quant; i++) {
@@ -157,7 +157,11 @@ function VerificaDiv(layer, direction, layerCor) {
         objetosArray[layer][i].w,
         objetosArray[layer][i].h,
       );
-      if (maiorLado > 100 * 2) {
+      let menorLado = Math.min(
+        objetosArray[layer][i].w,
+        objetosArray[layer][i].h,
+      );
+      if (maiorLado > 100 * 2 && menorLado > 100) {
         porcentagem = maiorLado / 100;
         dividir =
           Math.floor(Math.random() * porcentagem) + (porcentagem < 3 ? 0 : 2);
@@ -172,6 +176,7 @@ function VerificaDiv(layer, direction, layerCor) {
       coresPai[layerCor].push(objetosArray[layer][i].color);
     }
     if (dividir > 0) {
+      let cortar;
       if (objetosArray[layer][i].count < 3) {
         porcentagem = (objetosArray[layer][i].count * 2.5) / 10 + 1 / 10;
         cortar = Math.random() > porcentagem;
@@ -211,9 +216,9 @@ function VerificaDiv(layer, direction, layerCor) {
       }
     } else {
       let confirmW =
-        objetosArray[layer][i].w > 100 && objetosArray[layer][i].h > 80 ;
+       ( objetosArray[layer][i].w > 100 && objetosArray[layer][i].h > 80 );
       let confirmH =
-        objetosArray[layer][i].h > 100 && objetosArray[layer][i].w > 80;
+       ( objetosArray[layer][i].h > 100 && objetosArray[layer][i].w > 80 );
       if (objetosArray[layer][i]) {
         objetosArrayE.push(objetosArray[layer][i]);
         objetosArray[layer].splice(i, 1);
@@ -243,38 +248,39 @@ function VerificaDiv(layer, direction, layerCor) {
   }
 
   if (layer === 0 && ultimaVolta > 0) {
-    for (let i = 0; i < objetosArrayE.length; i++) {
-      if (objetosArrayE[i].cortado && objetosArrayE[i + 1]) {
-        confirmFilho =
-          objetosArrayE[i].x <= objetosArrayE[i + 1].x &&
-          objetosArrayE[i].x + objetosArrayE[i].w >=
-            objetosArrayE[i + 1].x + objetosArrayE[i + 1].w &&
-          objetosArrayE[i].y <= objetosArrayE[i + 1].y &&
-          objetosArrayE[i].y + objetosArrayE[i] .h >=
-            objetosArrayE[i + 1].y + objetosArrayE[i + 1].h;
+    // A inserção de objetos acontece em chamadas recursivas. Portanto, o filho
+    // de um pai não é necessariamente o próximo item de objetosArrayE.
+    // Usamos uma cópia para que cada pai seja conferido contra os objetos que
+    // já existiam antes desta correção, sem uma adição influenciar outra.
+    const objetosParaConferir = objetosArrayE.slice();
+    for (let i = 0; i < objetosParaConferir.length; i++) {
+      const pai = objetosParaConferir[i];
+      if (pai.cortado) {
+        const confirmFilho = objetosParaConferir.some((filho, indiceFilho) => {
+          if (indiceFilho === i) {
+            return false;
+          }
 
-        if (objetosArrayE[i + 1].diameter) {
-          confirmFilho =
-            objetosArrayE[i].x <= objetosArrayE[i + 1].x &&
-            objetosArrayE[i].x + objetosArrayE[i].w >=
-              objetosArrayE[i + 1].x + objetosArrayE[i + 1].diameter &&
-            objetosArrayE[i].y <= objetosArrayE[i + 1].y &&
-            objetosArrayE[i].y + objetosArrayE[i].h >=
-              objetosArrayE[i + 1].y + objetosArrayE[i + 1].diameter;
-        }
-        console.log("aaaaaaaaa")
-        console.log(confirmFilho);
-        console.log(objetosArrayE[i]);
-        console.log(objetosArrayE[i + 1]);
-        if (confirmFilho === false) {
+          const larguraFilho = filho.diameter ?? filho.w;
+          const alturaFilho = filho.diameter ?? filho.h;
+
+          return (
+            pai.x <= filho.x &&
+            pai.x + pai.w >= filho.x + larguraFilho &&
+            pai.y <= filho.y &&
+            pai.y + pai.h >= filho.y + alturaFilho
+          );
+        });
+
+        if (!confirmFilho) {
           AddRet(
             layer + 1,
-            ( objetosArrayE[i].x + margemMin ),
-            ( objetosArrayE[i].y + margemMin ),
+            ( pai.x + margemMin ),
+            ( pai.y + margemMin ),
             0,
             0,
-            ( objetosArrayE[i].w - margemMin * 2 ),
-            ( objetosArrayE[i].h - margemMin * 2 ),
+            ( pai.w - margemMin * 2 ),
+            ( pai.h - margemMin * 2 ),
             Math.floor(Math.random() * 3),
             0,
             layerCor,
@@ -282,8 +288,6 @@ function VerificaDiv(layer, direction, layerCor) {
         }
       }
     }
-    console.log(objetosArrayE);
-    console.log(objetosArray);
     geraCor();
   }
 }
@@ -305,7 +309,7 @@ function AddRet(layer, x, y, w, h, W, H, tipoRet, verificar, layerCor) {
   const parentY = y;
 
   // seleciona a cor do pai para gerar a cor do filho
-  corPai = coresPai[layerCor][coresPai[layerCor].length - 1];
+  const corPai = coresPai[layerCor][coresPai[layerCor].length - 1];
   // define a cor do filho aleatoriamente com base na cor do pai
   let color = {
     r: Math.abs(Math.floor(Math.random() * 55) + corPai.r + 100) % 255,
@@ -582,11 +586,15 @@ function AddRet(layer, x, y, w, h, W, H, tipoRet, verificar, layerCor) {
       break;
     // circulo
     case 3:
-      diameter = Math.max(randomInt(Math.min(W, H) * 0.9, Math.min(W, H) * 1), 20);
-      greatSide = Math.max(W, H) + margemMin * 2;
-      minGap = 30;
-      quantCircles = Math.floor((greatSide - minGap) / (diameter + minGap));
-      finalGap = (greatSide - quantCircles * diameter) / (quantCircles + 1);
+      const diameter = Math.max(randomInt(Math.min(W, H) * 0.9, Math.min(W, H) * 1), 20);
+      const greatSide = Math.max(W, H) + margemMin * 2;
+      const minGap = 30;
+      
+      const quantCircles = Math.max(
+        1,
+        Math.floor((greatSide - minGap) / (diameter + minGap)),
+      );
+      const finalGap = (greatSide - quantCircles * diameter) / (quantCircles + 1);
       for (let i = 0; i < quantCircles; i++) {
         if (W >= H) {
           x = (parentX - margemMin) + finalGap + i * (diameter + finalGap);
@@ -611,8 +619,6 @@ function AddRet(layer, x, y, w, h, W, H, tipoRet, verificar, layerCor) {
 
 function geraCor() {
   for (let i = 0; i < objetosArrayE.length; i++) {
-    console.log(objetosArrayE[i]);
-      
       if (!objetosArrayE[i].circle) {
         criarElem(
           objetosArrayE[i].x,
