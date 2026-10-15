@@ -17,7 +17,7 @@ let h = 0;
 let x = 0;
 let y = 0;
 let porcentagem = 0;
-let dificuldade = 1;
+let dificuldade = 2;
 let a = 0;
 let aleatorio = 0;
 function resizeCanvas() {
@@ -721,23 +721,35 @@ function SelecionaDificuldade(dificuldade) {
   objetosArrayFinal.sort(
     (obj1, obj2) => (obj2.w + obj2.h) / 2 - (obj1.w + obj1.h) / 2,
   );
-  switch (dificuldade) {
-    // Facil
-    case 1:
-      posicaoRemover = objetosArrayE.length - 16;
+  setTimeout(() => {
+    switch (dificuldade) {
+      // Facil
+      case 1:
+        posicaoRemover =
+          objetosArrayFinal.length -
+          Math.floor(objetosArrayFinal.length * 0.5 + 1);
 
-      objetosArrayFinal.splice(posicaoRemover, 15);
-      resizeCanvas();
+        objetosArrayFinal.splice(
+          posicaoRemover,
+          Math.floor(objetosArrayFinal.length * 0.5),
+        );
+        resizeCanvas();
 
-      break;
-    // Media
-    case 2:
-      posicaoRemover = objetosArrayE.length - 10;
-      objetosArrayFinal.splice(posicaoRemover, 9);
+        break;
+      // Media
+      case 2:
+        posicaoRemover =
+          objetosArrayFinal.length -
+          Math.floor(objetosArrayFinal.length * 0.3 + 1);
 
-      resizeCanvas();
-      break;
-  }
+        objetosArrayFinal.splice(
+          posicaoRemover,
+          Math.floor(objetosArrayFinal.length * 0.3),
+        );
+        resizeCanvas();
+        break;
+    }
+  }, 1000);
 }
 // coisas para fazer:
 // 1. adicionar elementos no final dos cortes
