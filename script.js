@@ -17,6 +17,7 @@ let h = 0;
 let x = 0;
 let y = 0;
 let porcentagem = 0;
+let dificuldade = 1;
 let a = 0;
 let aleatorio = 0;
 function resizeCanvas() {
@@ -316,7 +317,6 @@ function AddRet(layer, x, y, w, h, W, H, tipoRet, verificar, layerCor) {
   const corPai = coresPai[layerCor][coresPai[layerCor].length - 1];
   // define a cor do filho aleatoriamente com base na cor do pai
   let color = {
-    
     r: Math.abs(Math.floor(Math.random() * 105) + corPai.r + 75) % 255,
     g: Math.abs(Math.floor(Math.random() * 105) + corPai.g + 75) % 255,
     b: Math.abs(Math.floor(Math.random() * 105) + corPai.b + 75) % 255,
@@ -328,13 +328,10 @@ function AddRet(layer, x, y, w, h, W, H, tipoRet, verificar, layerCor) {
   ) {
     if (corPai.r >= corPai.b && corPai.r >= corPai.g) {
       aleatorio = Math.random() * 2 + 1;
-      
     } else if (corPai.g >= corPai.r && corPai.g >= corPai.b) {
-      aleatorio = Math.random() * 2 + 2 % 3;
-      
-    } else{
+      aleatorio = Math.random() * 2 + (2 % 3);
+    } else {
       aleatorio = Math.random() * 2;
-
     }
     aleatorio < 1
       ? (color.r = (color.r + 100) % 255)
@@ -660,11 +657,15 @@ function geraCor() {
         `rgb(${objetosArrayE[i].color.r}, ${objetosArrayE[i].color.g}, ${objetosArrayE[i].color.b})`,
       );
     }
+    // objetos array final serve para que a correção de objetos vazios não aconteça duas vezes no mesmo objeto
+    if (objetosArrayE[i].color) {
+      objetosArrayFinal.push(objetosArrayE[i]);
+    }
   }
 
-  // objetos array final serve para que a correção de objetos vazios não aconteça duas vezes no mesmo objeto
-  objetosArrayFinal.push(...objetosArrayE);
   objetosArrayE = [];
+  console.log(objetosArrayFinal);
+  console.log(objetosArrayE);
 }
 
 function criarElem(x, y, diameter, w, h, circle, cor) {
@@ -714,7 +715,30 @@ if (qualLayoutPrimario === 0) {
   EscolheLayout(0, 300, 0, 0, 0, 500, 600, 0, direction, 0);
   EscolheLayout(0, 0, 600, 0, 0, 800, 200, 0, direction, 0);
 }
+SelecionaDificuldade(dificuldade);
+function SelecionaDificuldade(dificuldade) {
+  let posicaoRemover = 0;
+  objetosArrayFinal.sort(
+    (obj1, obj2) => (obj2.w + obj2.h) / 2 - (obj1.w + obj1.h) / 2,
+  );
+  switch (dificuldade) {
+    // Facil
+    case 1:
+      posicaoRemover = objetosArrayE.length - 16;
 
+      objetosArrayFinal.splice(posicaoRemover, 15);
+      resizeCanvas();
+
+      break;
+    // Media
+    case 2:
+      posicaoRemover = objetosArrayE.length - 10;
+      objetosArrayFinal.splice(posicaoRemover, 9);
+
+      resizeCanvas();
+      break;
+  }
+}
 // coisas para fazer:
 // 1. adicionar elementos no final dos cortes
 // 2. acrescentar niveis de dificuldade
