@@ -2,24 +2,28 @@ const canvas = document.getElementById("canva");
 const ctx = canvas.getContext("2d");
 const LARGURA_BASE = 1000;
 const ALTURA_BASE = 960;
+let a = 0;
+let aleatorio = 0;
+let coresPai = [];
+let corFundo = null;
+let dificuldade = 3;
+let direction = 0;
+let margemMin = 15;
+let nDiv = 0;
 let objetosArray = [];
 let objetosArrayE = [];
 let objetosArrayFinal = [];
-let coresPai = [];
-let corFundo = null;
-let direction = 0;
-let margemMin = 15;
-let tamanhoMin = 70;
+let porcentagem = 0;
+let proporcaoImagem = {
+  x: 800,
+  y: 800,
+};
 let quant = 0;
-let nDiv = 0;
+let tamanhoMin = 70;
 let w = 0;
 let h = 0;
 let x = 0;
 let y = 0;
-let porcentagem = 0;
-let dificuldade = 2;
-let a = 0;
-let aleatorio = 0;
 function resizeCanvas() {
   const larguraVisual = canvas.clientWidth;
   const alturaVisual = canvas.clientHeight;
@@ -698,22 +702,62 @@ coresPai.push([
 corFundo = `rgb(${coresPai[0][0].r}, ${coresPai[0][0].g}, ${coresPai[0][0].b})`;
 criarElem(0, 0, null, 800, 800, false, corFundo);
 
-let qualLayoutPrimario = Math.floor(Math.random() * 3);
+let qualLayoutPrimario = Math.floor(Math.random() * 8);
 direction = Math.floor(Math.random() * 2);
 
+switch (qualLayoutPrimario) {
+  case 0:
+    EscolheLayout(0, 0, 0, 0, 0, proporcaoImagem.x, proporcaoImagem.y/4, 0, 0, 0);
+    EscolheLayout(0, 0, proporcaoImagem.y/4, 0, 0, proporcaoImagem.x, proporcaoImagem.y/2, 0, direction, 0);
+    EscolheLayout(0, 0, proporcaoImagem.y*3/4, 0, 0, proporcaoImagem.x, proporcaoImagem.y/4, 0, 0, 0);
+    
+    break;
+  case 1:
+    EscolheLayout(0, 0, 0, 0, 0, proporcaoImagem.x/4, proporcaoImagem.y, 0, 1, 0);
+    EscolheLayout(0, proporcaoImagem.x/4, 0, 0, 0, proporcaoImagem.x/2, proporcaoImagem.y, 0, direction, 0);
+    EscolheLayout(0, proporcaoImagem.x*3/4, 0, 0, 0, proporcaoImagem.x/4, proporcaoImagem.y, 0, 1, 0);
+    break;
+  case 2:
+    EscolheLayout(0, 0, 0, 0, 0, proporcaoImagem.x*3/8, proporcaoImagem.y*3/4, 0, direction, 0);
+    EscolheLayout(0, proporcaoImagem.x*3/8, 0, 0, 0, proporcaoImagem.x*5/8, proporcaoImagem.y*3/4, 0, direction, 0);
+    EscolheLayout(0, 0, proporcaoImagem.x*3/4, 0, 0, proporcaoImagem.x, proporcaoImagem.y/4, 0, direction, 0);
+    break;
+  case 3:
+    EscolheLayout(0, 0, 0, 0, 0, proporcaoImagem.x, proporcaoImagem.y/4, 0, direction, 0);
+    EscolheLayout(0, 0, proporcaoImagem.y/4, 0, 0, proporcaoImagem.x/4, proporcaoImagem.y/2, 0, direction, 0);
+    EscolheLayout(0, proporcaoImagem.x/4, proporcaoImagem.y/4, 0, 0, proporcaoImagem.x*3/4, proporcaoImagem.y/2, 0, direction, 0);
+    EscolheLayout(0, 0, proporcaoImagem.y*3/4, 0, 0, proporcaoImagem.x, proporcaoImagem.y/4, 0, direction, 0);
+    break;
+  case 4:
+    //(layer,        x, y, w, h, W,   H,  count, direction, layerCor)
+    EscolheLayout(0, 0, 0, 0, 0, proporcaoImagem.x, proporcaoImagem.y*4/10, 0, direction, 0);
+    EscolheLayout(0, 0, proporcaoImagem.y*4/10, 0, 0, proporcaoImagem.x/3, proporcaoImagem.y*6/10, 0, direction, 0);
+    EscolheLayout(0, proporcaoImagem.x/3, proporcaoImagem.y*4/10, 0, 0, proporcaoImagem.x/3, proporcaoImagem.y*6/10, 0, direction, 0);
+    EscolheLayout(0, proporcaoImagem.x*2/3, proporcaoImagem.y*4/10, 0, 0, proporcaoImagem.x/3, proporcaoImagem.y*6/10, 0, direction, 0);
+    break;
+  case 5:
+      EscolheLayout(0, 0, 0, 0, 0, proporcaoImagem.x/2, proporcaoImagem.y/2, 0, direction, 0);
+      EscolheLayout(0, proporcaoImagem.x/2, 0, 0, 0, proporcaoImagem.x/2, proporcaoImagem.y/2, 0, direction, 0);
+      EscolheLayout(0, 0, proporcaoImagem.y/2, 0, 0, proporcaoImagem.x/2, proporcaoImagem.y/2, 0, direction, 0);
+      EscolheLayout(0, proporcaoImagem.x/2, proporcaoImagem.y/2, 0, 0, proporcaoImagem.x/2, proporcaoImagem.y/2, 0, direction, 0);
+      break;
+  case 6:
+    EscolheLayout(0, 0, 0, 0, 0, proporcaoImagem.x*6/10, proporcaoImagem.y, 0, direction, 0);
+    EscolheLayout(0, proporcaoImagem.x*6/10, 0, 0, 0, proporcaoImagem.x*4/10, proporcaoImagem.y/2, 0, direction, 0);
+    EscolheLayout(0, proporcaoImagem.x*6/10, proporcaoImagem.y/2, 0, 0, proporcaoImagem.x*4/10, proporcaoImagem.y/2, 0, direction, 0);
+    break;
+  case 7:
+    EscolheLayout(0, 0, 0, 0, 0, proporcaoImagem.x, proporcaoImagem.y/8, 0, direction, 0);
+    EscolheLayout(0, 0, proporcaoImagem.y/8, 0, 0, proporcaoImagem.x/5, proporcaoImagem.y*7/8, 0, direction, 0);
+    EscolheLayout(0, proporcaoImagem.x/5, proporcaoImagem.y/8, 0, 0, proporcaoImagem.x*4/5, proporcaoImagem.y*7/16, 0, direction, 0);
+    EscolheLayout(0, proporcaoImagem.x/5, proporcaoImagem.y*9/16, 0, 0, proporcaoImagem.x*4/5, proporcaoImagem.y*7/16, 0, direction, 0);
+    break;
+
+
+}
 if (qualLayoutPrimario === 0) {
-  //(layer, x, y, w, h, W, H, count, direction, layerCor)
-  EscolheLayout(0, 0, 0, 0, 0, 800, 200, 0, 0, 0);
-  EscolheLayout(0, 0, 200, 0, 0, 800, 400, 0, direction, 0);
-  EscolheLayout(0, 0, 600, 0, 0, 800, 200, 0, 0, 0);
 } else if (qualLayoutPrimario === 1) {
-  EscolheLayout(0, 0, 0, 0, 0, 200, 800, 0, 1, 0);
-  EscolheLayout(0, 200, 0, 0, 0, 400, 800, 0, direction, 0);
-  EscolheLayout(0, 600, 0, 0, 0, 200, 800, 0, 1, 0);
 } else if (qualLayoutPrimario === 2) {
-  EscolheLayout(0, 0, 0, 0, 0, 300, 600, 0, direction, 0);
-  EscolheLayout(0, 300, 0, 0, 0, 500, 600, 0, direction, 0);
-  EscolheLayout(0, 0, 600, 0, 0, 800, 200, 0, direction, 0);
 }
 SelecionaDificuldade(dificuldade);
 function SelecionaDificuldade(dificuldade) {
