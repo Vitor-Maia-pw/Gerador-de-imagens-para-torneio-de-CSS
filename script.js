@@ -1,6 +1,6 @@
 const canvas = document.getElementById("canva");
 const ctx = canvas.getContext("2d");
-const LARGURA_BASE = 1000;
+const LARGURA_BASE = 1200;
 const ALTURA_BASE = 960;
 let a = 0;
 let aleatorio = 0;
@@ -15,11 +15,15 @@ let objetosArrayE = [];
 let objetosArrayFinal = [];
 let porcentagem = 0;
 let proporcaoImagem = {
-  x: 800,
+  x: 1200,
   y: 800,
 };
+
 let quant = 0;
-let tamanhoMin = 70;
+let tamanhoMin = {
+  x: proporcaoImagem.x*7/80,
+  y: proporcaoImagem.y*7/80,
+};
 let w = 0;
 let h = 0;
 let x = 0;
@@ -43,7 +47,7 @@ function resizeCanvas() {
   );
 
   if (corFundo) {
-    criarElem(0, 0, null, 800, 800, false, corFundo);
+    criarElem(0, 0, null, proporcaoImagem.x, proporcaoImagem.y, false, corFundo);
   }
 
   for (const objeto of objetosArrayFinal) {
@@ -73,7 +77,7 @@ function EscolheLayout(layer, x, y, w, h, W, H, count, direction, layerCor) {
   }
   // direction = row
   if (direction === 0) {
-    nDiv = Math.floor(W / tamanhoMin);
+    nDiv = Math.floor(W / tamanhoMin.x);
     if (nDiv > 3) {
       nDiv = 3;
     }
@@ -88,8 +92,8 @@ function EscolheLayout(layer, x, y, w, h, W, H, count, direction, layerCor) {
       } else {
         // tem a chance de gerar
         w =
-          Math.floor(Math.random() * (W - tamanhoMin * (quant - i + 1))) +
-          tamanhoMin;
+          Math.floor(Math.random() * (W - tamanhoMin.x * (quant - i + 1))) +
+          tamanhoMin.x;
         W -= w;
         nDiv--;
       }
@@ -105,7 +109,7 @@ function EscolheLayout(layer, x, y, w, h, W, H, count, direction, layerCor) {
   }
   //direction = column
   else {
-    nDiv = Math.floor(H / tamanhoMin);
+    nDiv = Math.floor(H / tamanhoMin.y);
     if (nDiv > 3) {
       nDiv = 3;
     }
@@ -119,8 +123,8 @@ function EscolheLayout(layer, x, y, w, h, W, H, count, direction, layerCor) {
         h = H;
       } else {
         h =
-          Math.floor(Math.random() * (H - tamanhoMin * (quant - i + 1))) +
-          tamanhoMin;
+          Math.floor(Math.random() * (H - tamanhoMin.y * (quant - i + 1))) +
+          tamanhoMin.y;
         H -= h;
       }
 
@@ -144,19 +148,19 @@ function VerificaDiv(layer, direction, layerCor) {
     let dividir = 0;
     if (direction === 0) {
       if (
-        objetosArray[layer][i].h > tamanhoMin * 2 &&
-        objetosArray[layer][i].w > tamanhoMin
+        objetosArray[layer][i].h > tamanhoMin.y * 2 &&
+        objetosArray[layer][i].w > tamanhoMin.x
       ) {
-        porcentagem = objetosArray[layer][i].h / tamanhoMin;
+        porcentagem = objetosArray[layer][i].h / tamanhoMin.y;
         dividir =
           Math.floor(Math.random() * porcentagem) + (porcentagem < 3 ? 0 : 2);
       }
     } else if (direction === 1) {
       if (
-        objetosArray[layer][i].w > tamanhoMin * 2 &&
-        objetosArray[layer][i].h > tamanhoMin
+        objetosArray[layer][i].w > tamanhoMin.x * 2 &&
+        objetosArray[layer][i].h > tamanhoMin.y
       ) {
-        porcentagem = objetosArray[layer][i].w / tamanhoMin;
+        porcentagem = objetosArray[layer][i].w / tamanhoMin.x;
         dividir =
           Math.floor(Math.random() * porcentagem) + (porcentagem < 3 ? 0 : 2);
       }
@@ -169,8 +173,8 @@ function VerificaDiv(layer, direction, layerCor) {
         objetosArray[layer][i].w,
         objetosArray[layer][i].h,
       );
-      if (maiorLado > tamanhoMin * 2 && menorLado > tamanhoMin) {
-        porcentagem = maiorLado / tamanhoMin;
+      if (maiorLado > (objetosArray[layer][i].w === maiorLado? tamanhoMin.x : tamanhoMin.y) * 2 && menorLado > (objetosArray[layer][i].h === menorLado? tamanhoMin.y : tamanhoMin.x)) {
+        porcentagem = maiorLado / (objetosArray[layer][i].w === maiorLado? tamanhoMin.x : tamanhoMin.y);
         dividir =
           Math.floor(Math.random() * porcentagem) + (porcentagem < 3 ? 0 : 2);
       }
@@ -700,11 +704,11 @@ coresPai.push([
   },
 ]);
 corFundo = `rgb(${coresPai[0][0].r}, ${coresPai[0][0].g}, ${coresPai[0][0].b})`;
-criarElem(0, 0, null, 800, 800, false, corFundo);
+criarElem(0, 0, null, proporcaoImagem.x, proporcaoImagem.y, false, corFundo);
 
 let qualLayoutPrimario = Math.floor(Math.random() * 8);
 direction = Math.floor(Math.random() * 2);
-
+console.log(qualLayoutPrimario)
 switch (qualLayoutPrimario) {
   case 0:
     EscolheLayout(0, 0, 0, 0, 0, proporcaoImagem.x, proporcaoImagem.y/4, 0, 0, 0);
@@ -718,9 +722,10 @@ switch (qualLayoutPrimario) {
     EscolheLayout(0, proporcaoImagem.x*3/4, 0, 0, 0, proporcaoImagem.x/4, proporcaoImagem.y, 0, 1, 0);
     break;
   case 2:
+    //(layer,        x, y, w, h, W,           H,  count, direction, layerCor)
     EscolheLayout(0, 0, 0, 0, 0, proporcaoImagem.x*3/8, proporcaoImagem.y*3/4, 0, direction, 0);
     EscolheLayout(0, proporcaoImagem.x*3/8, 0, 0, 0, proporcaoImagem.x*5/8, proporcaoImagem.y*3/4, 0, direction, 0);
-    EscolheLayout(0, 0, proporcaoImagem.x*3/4, 0, 0, proporcaoImagem.x, proporcaoImagem.y/4, 0, direction, 0);
+    EscolheLayout(0, 0, proporcaoImagem.y*3/4, 0, 0, proporcaoImagem.x, proporcaoImagem.y/4, 0, direction, 0);
     break;
   case 3:
     EscolheLayout(0, 0, 0, 0, 0, proporcaoImagem.x, proporcaoImagem.y/4, 0, direction, 0);
@@ -729,7 +734,6 @@ switch (qualLayoutPrimario) {
     EscolheLayout(0, 0, proporcaoImagem.y*3/4, 0, 0, proporcaoImagem.x, proporcaoImagem.y/4, 0, direction, 0);
     break;
   case 4:
-    //(layer,        x, y, w, h, W,   H,  count, direction, layerCor)
     EscolheLayout(0, 0, 0, 0, 0, proporcaoImagem.x, proporcaoImagem.y*4/10, 0, direction, 0);
     EscolheLayout(0, 0, proporcaoImagem.y*4/10, 0, 0, proporcaoImagem.x/3, proporcaoImagem.y*6/10, 0, direction, 0);
     EscolheLayout(0, proporcaoImagem.x/3, proporcaoImagem.y*4/10, 0, 0, proporcaoImagem.x/3, proporcaoImagem.y*6/10, 0, direction, 0);
