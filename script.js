@@ -604,10 +604,10 @@ function AddRet(layer, x, y, w, h, W, H, tipoRet, verificar, layerCor) {
     case 3:
       const diameter = Math.max(
         randomInt(Math.min(W, H) * 0.9, Math.min(W, H) * 1),
-        20,
+        (proporcaoImagem.x + proporcaoImagem.y)/2 * (2/80),
       );
       const greatSide = Math.max(W, H) + margemMin * 2;
-      const minGap = 30;
+      const minGap = (proporcaoImagem.x + proporcaoImagem.y)/2 * (3/80);
 
       const quantCircles = Math.max(
         1,
