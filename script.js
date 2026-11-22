@@ -1,29 +1,26 @@
 const canvas = document.getElementById("canva");
 const ctx = canvas.getContext("2d");
-const LARGURA_BASE = 1200;
-const ALTURA_BASE = 960;
 let a = 0;
 let aleatorio = 0;
 let coresPai = [];
 let corFundo = null;
 let dificuldade = 3;
 let direction = 0;
-let margemMin = 15;
+
+//x 15/8
 let nDiv = 0;
 let objetosArray = [];
 let objetosArrayE = [];
 let objetosArrayFinal = [];
 let porcentagem = 0;
 let proporcaoImagem = {
-  x: 1200,
+  x: 800,
   y: 800,
 };
 
 let quant = 0;
-let tamanhoMin = {
-  x: proporcaoImagem.x*7/80,
-  y: proporcaoImagem.y*7/80,
-};
+let tamanhoMin = (proporcaoImagem.x + proporcaoImagem.y)/2 * (7/80)
+let margemMin = (proporcaoImagem.x + proporcaoImagem.y)/2 * (15/800);
 let w = 0;
 let h = 0;
 let x = 0;
@@ -38,10 +35,10 @@ function resizeCanvas() {
   canvas.width = Math.round(larguraVisual * densidade);
   canvas.height = Math.round(alturaVisual * densidade);
   ctx.setTransform(
-    canvas.width / LARGURA_BASE,
+    canvas.width / Math.max(proporcaoImagem.x, proporcaoImagem.y),
     0,
     0,
-    canvas.height / ALTURA_BASE,
+    canvas.height / Math.max(proporcaoImagem.x, proporcaoImagem.y),
     0,
     0,
   );
@@ -77,7 +74,7 @@ function EscolheLayout(layer, x, y, w, h, W, H, count, direction, layerCor) {
   }
   // direction = row
   if (direction === 0) {
-    nDiv = Math.floor(W / tamanhoMin.x);
+    nDiv = Math.floor(W / tamanhoMin);
     if (nDiv > 3) {
       nDiv = 3;
     }
@@ -92,8 +89,8 @@ function EscolheLayout(layer, x, y, w, h, W, H, count, direction, layerCor) {
       } else {
         // tem a chance de gerar
         w =
-          Math.floor(Math.random() * (W - tamanhoMin.x * (quant - i + 1))) +
-          tamanhoMin.x;
+          Math.floor(Math.random() * (W - tamanhoMin * (quant - i + 1))) +
+          tamanhoMin;
         W -= w;
         nDiv--;
       }
@@ -109,7 +106,7 @@ function EscolheLayout(layer, x, y, w, h, W, H, count, direction, layerCor) {
   }
   //direction = column
   else {
-    nDiv = Math.floor(H / tamanhoMin.y);
+    nDiv = Math.floor(H / tamanhoMin);
     if (nDiv > 3) {
       nDiv = 3;
     }
@@ -123,8 +120,8 @@ function EscolheLayout(layer, x, y, w, h, W, H, count, direction, layerCor) {
         h = H;
       } else {
         h =
-          Math.floor(Math.random() * (H - tamanhoMin.y * (quant - i + 1))) +
-          tamanhoMin.y;
+          Math.floor(Math.random() * (H - tamanhoMin * (quant - i + 1))) +
+          tamanhoMin;
         H -= h;
       }
 
@@ -148,19 +145,19 @@ function VerificaDiv(layer, direction, layerCor) {
     let dividir = 0;
     if (direction === 0) {
       if (
-        objetosArray[layer][i].h > tamanhoMin.y * 2 &&
-        objetosArray[layer][i].w > tamanhoMin.x
+        objetosArray[layer][i].h > tamanhoMin * 2 &&
+        objetosArray[layer][i].w > tamanhoMin
       ) {
-        porcentagem = objetosArray[layer][i].h / tamanhoMin.y;
+        porcentagem = objetosArray[layer][i].h / tamanhoMin;
         dividir =
           Math.floor(Math.random() * porcentagem) + (porcentagem < 3 ? 0 : 2);
       }
     } else if (direction === 1) {
       if (
-        objetosArray[layer][i].w > tamanhoMin.x * 2 &&
-        objetosArray[layer][i].h > tamanhoMin.y
+        objetosArray[layer][i].w > tamanhoMin * 2 &&
+        objetosArray[layer][i].h > tamanhoMin
       ) {
-        porcentagem = objetosArray[layer][i].w / tamanhoMin.x;
+        porcentagem = objetosArray[layer][i].w / tamanhoMin;
         dividir =
           Math.floor(Math.random() * porcentagem) + (porcentagem < 3 ? 0 : 2);
       }
@@ -173,8 +170,8 @@ function VerificaDiv(layer, direction, layerCor) {
         objetosArray[layer][i].w,
         objetosArray[layer][i].h,
       );
-      if (maiorLado > (objetosArray[layer][i].w === maiorLado? tamanhoMin.x : tamanhoMin.y) * 2 && menorLado > (objetosArray[layer][i].h === menorLado? tamanhoMin.y : tamanhoMin.x)) {
-        porcentagem = maiorLado / (objetosArray[layer][i].w === maiorLado? tamanhoMin.x : tamanhoMin.y);
+      if (maiorLado > (objetosArray[layer][i].w === maiorLado? tamanhoMin : tamanhoMin) * 2 && menorLado > (objetosArray[layer][i].h === menorLado? tamanhoMin : tamanhoMin)) {
+        porcentagem = maiorLado / (objetosArray[layer][i].w === maiorLado? tamanhoMin : tamanhoMin);
         dividir =
           Math.floor(Math.random() * porcentagem) + (porcentagem < 3 ? 0 : 2);
       }
