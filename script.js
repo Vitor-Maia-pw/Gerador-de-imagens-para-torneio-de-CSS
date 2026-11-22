@@ -327,9 +327,9 @@ function AddRet(layer, x, y, w, h, W, H, tipoRet, verificar, layerCor) {
     b: Math.abs(Math.floor(Math.random() * 105) + corPai.b + 75) % 255,
   };
   if (
-    color.r - color.g < 40 &&
-    color.r - color.b < 40 &&
-    color.g - color.b < 40
+    Math.abs(color.r - color.g) < 40 &&
+    Math.abs(color.r - color.b) < 40 &&
+    Math.abs(color.g - color.b) < 40
   ) {
     if (corPai.r >= corPai.b && corPai.r >= corPai.g) {
       aleatorio = Math.random() * 2 + 1;
