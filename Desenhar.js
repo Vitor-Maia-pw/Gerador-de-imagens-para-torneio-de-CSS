@@ -26,6 +26,7 @@ function geraCor() {
     // objetos array final serve para que a correção de objetos vazios não aconteça duas vezes no mesmo objeto
     if (objetosArrayE[i].color) {
       objetosArrayFinal.push(objetosArrayE[i]);
+      
     }
   }
 
